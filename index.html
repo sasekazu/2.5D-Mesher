@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html><head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>2.5D Mesher</title>
+		<link rel="stylesheet" type="text/css" href="index.css">
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script type="text/javascript" src="numeric-1.2.6.min.js"></script>
+		<script type="text/javascript" src="outline.js"></script>    
+		<script type="text/javascript" src="delaunay.js"></script>    
+		<script type="text/javascript" src="main.js"></script>    
+	</head>
+	<body>
+		<canvas id="mViewCanvas" width="800" height="500">
+		</canvas>
+		<div>
+			<input id="resetButton" value="リセット" type="button" />
+			<input id="meshButton" value="1.メッシュ生成" type="button" />
+			<input id="physicsButton" value="2.物理計算" type="button" />
+		</div>
+		<div>
+			<label><input id="meshCheckBox" type="checkbox" checked>メッシュ表示</label><br />
+			<label><input id="dataCheckBox" type="checkbox" checked>データ可視化</label><br />
+			<input id="uploadFile" name="image" type="file" />
+		</div>
+</body>
+</html>
