@@ -4,6 +4,7 @@
 /// <reference path="outline.js" />
 /// <reference path="delaunay.js" />
 /// <reference path="EditableMesh.js" />
+/// <reference path="drawFunc.js" />
 
 
 $(document).ready(function () {
@@ -27,7 +28,6 @@ $(document).ready(function () {
 	};
 	resizeCanvas();	
 	*/
-
 	
 	
 	// マウスポインタに関する変数
@@ -139,8 +139,12 @@ $(document).ready(function () {
 		var message;
 		switch(state) {
 			case "drawOutLine":
-				message = "輪郭手書きモード";
+				message = "輪郭追加モード";
 				drawOutLineFunc();
+				break;
+			case "editOutLine":
+				message = "輪郭編集モード";
+				editOutLineFunc();
 				break;
 			case "generateMesh":
 				message = "メッシュ生成中";
@@ -163,7 +167,6 @@ $(document).ready(function () {
 	////////　 アウトライン作成関数
 	/////////////////////////////////////////////////////////
 	function drawOutLineFunc(){
-		var imgFlag = $('#imgCheckBox').is(':checked');
 		switch (clickState) {
 			case "Down":
 				if (drawingFlag) {
@@ -191,12 +194,32 @@ $(document).ready(function () {
 				drawingFlag = true;
 				break;
 		}
+
+		// 描画実行
+		drawOutLine();
+	}
+
+
+	/////////////////////////////////////////////////////////
+	////////　 アウトライン作成関数
+	/////////////////////////////////////////////////////////
+	function editOutLineFunc() {
+
+		// 描画実行
+		drawOutLine();
+	}
+
+	/////////////////////////////////////////////////////////
+	////////　 アウトライン描画関数
+	/////////////////////////////////////////////////////////
+	function drawOutLine() {
 		// 描画処理
 		// 画面をリセット
 		context.setTransform(1,0,0,1,0,0);
 		context.clearRect(0, 0, canvasWidth, canvasHeight);
 
 		// 全体の写真を描画
+		var imgFlag = $('#imgCheckBox').is(':checked');
 		if(imgFlag)
 			context.drawImage(img, dx, dy, dw, dh);
 
@@ -205,13 +228,13 @@ $(document).ready(function () {
 
 		// 作成中の曲線の描画
 		for (var i = 0; i < cv.lines.length; ++i) {
-			drawLine(cv.lines[i].start, cv.lines[i].end);
-			drawCircle(cv.lines[i].start, 2);
-			drawCircle(cv.lines[i].end, 2);
+			drawLine(context, cv.lines[i].start, cv.lines[i].end);
+			drawCircle(context, cv.lines[i].start, 2);
+			drawCircle(context, cv.lines[i].end, 2);
 		}
 		var color = 'rgb(255,0,0)';
 		context.fillStyle = color;
-		drawCircle(cv.endpos, 3);
+		drawCircle(context, cv.endpos, 3);
 
 		// 輪郭全体の描画
 		context.lineWidth = 4.0;
@@ -220,13 +243,12 @@ $(document).ready(function () {
 		for (var c = 0; c < outline.closedCurves.length; c++) {
 			var cvtmp = outline.closedCurves[c];
 			for (var i = 0; i < cvtmp.lines.length; ++i) {
-				drawLine(cvtmp.lines[i].start, cvtmp.lines[i].end);
-				drawCircle(cvtmp.lines[i].start, 1);
-				drawCircle(cvtmp.lines[i].end, 1);
+				drawLine(context, cvtmp.lines[i].start, cvtmp.lines[i].end);
+				drawCircle(context, cvtmp.lines[i].start, 1);
+				drawCircle(context, cvtmp.lines[i].end, 1);
 			}
 		}		
 		context.lineWidth = 1.0;
-
 	}
 	
 	//////////////////////////////////////////////////////////
@@ -256,7 +278,7 @@ $(document).ready(function () {
 		for (var c = 0; c < outline.closedCurves.length; c++) {
 			var cvtmp = outline.closedCurves[c];
 			for (var i = 0; i < cvtmp.lines.length; ++i) {
-				drawLine(cvtmp.lines[i].start, cvtmp.lines[i].end);
+				drawLine(context, cvtmp.lines[i].start, cvtmp.lines[i].end);
 			}
 		}		
 		context.lineWidth = 1.0;
@@ -266,7 +288,7 @@ $(document).ready(function () {
 		context.strokeStyle=color;
 		for(var i=0; i<mesh.tri.length; ++i) {
 			var tri=[mesh.tri[i][0], mesh.tri[i][1], mesh.tri[i][2]];
-			drawTriS(mesh.dPos[tri[0]], mesh.dPos[tri[1]], mesh.dPos[tri[2]]);
+			drawTriS(context, mesh.dPos[tri[0]], mesh.dPos[tri[1]], mesh.dPos[tri[2]]);
 		}
 
 
@@ -294,7 +316,7 @@ $(document).ready(function () {
 		context.strokeStyle=color;
 		for(var i=0; i<editMesh.tri.length; ++i) {
 			var tri=[editMesh.tri[i][0], editMesh.tri[i][1], editMesh.tri[i][2]];
-			drawTriS(editMesh.pos[tri[0]], editMesh.pos[tri[1]], editMesh.pos[tri[2]]);
+			drawTriS(context, editMesh.pos[tri[0]], editMesh.pos[tri[1]], editMesh.pos[tri[2]]);
 		}
 
 		// 輪郭全体の描画
@@ -303,10 +325,10 @@ $(document).ready(function () {
 		context.fillStyle=color;
 		context.strokeStyle=color;
 		for(var i = 0; i < editMesh.surEdge.length; ++i) {
-			drawLine(editMesh.pos[editMesh.surEdge[i][0]], editMesh.pos[editMesh.surEdge[i][1]]);
+			drawLine(context, editMesh.pos[editMesh.surEdge[i][0]], editMesh.pos[editMesh.surEdge[i][1]]);
 		}
 		for(var i = 0; i < editMesh.pos.length; ++i) {
-			drawCircle(editMesh.pos[i], 1);
+			drawCircle(context, editMesh.pos[i], 1);
 		}
 		context.lineWidth = 1.0;
 
@@ -322,6 +344,14 @@ $(document).ready(function () {
 		cv = new ClosedCurve(minlen);
 		outline = new Outline();
 		state = "drawOutLine";
+	});
+
+	$("#drawOutLineButton").click(function () {
+		state = "drawOutLine";
+	});
+
+	$("#editOutLineButton").click(function () {
+		state = "editOutLine";
 	});
 
 	// メッシュボタン
@@ -430,143 +460,6 @@ $(document).ready(function () {
 	$(window).mouseup( function(e){
 		endFunc();
 	});
-	
-	
-	
-	
-	
-	//////////////////////////////////////////////////////////
-	//////  描画用関数群
-	//////////////////////////////////////////////////////////
-	
-	
-		
-	// x,y座標軸を描画
-	function drawAxis(){
-		context.beginPath();
-		context.moveTo(0,0);
-		context.lineTo(canvasWidth,0);
-		context.closePath();
-		context.stroke();
-		
-		context.beginPath();
-		context.moveTo(0,0);
-		context.lineTo(0,canvasHeight);
-		context.closePath();
-		context.stroke();
-	}
-	
-	function drawGrid(){
-		drawSquareS([-1,-1],[1,-1],[1,1],[-1,1]);
-		context.fillStyle = 'rgb(0, 0, 0)'; // 黒
-		context.font = "10px 'Arial'";
-		context.textAlign = "left";
-		p1 = [0,1.0];
-		context.fillText("1.0", p1[0], p1[1]);
-		p1 = [1.0,0];
-		context.fillText("1.0", p1[0], p1[1]);
-		p1 = [0,-1.0];
-		context.fillText("-1.0", p1[0], p1[1]);
-		p1 = [-1.0,0];
-		context.fillText("-1.0", p1[0], p1[1]);
-	}
-	
-	// 線を描画する関数
-	// 引数は物理座標の２次元ベクトル
-	function drawLine(p1, p2){
-		context.beginPath();
-		context.moveTo( p1[0], p1[1]);
-		context.lineTo( p2[0], p2[1]);
-		context.stroke();
-	}
-	
-	// 三角形を描画する関数
-	// 引数は物理座標の２次元ベクトル
-	function drawTri(p1, p2, p3){
-		context.beginPath();
-		context.moveTo( p1[0], p1[1]);
-		context.lineTo( p2[0], p2[1]);
-		context.lineTo( p3[0], p3[1]);
-		context.closePath();
-		context.fill();
-	}
-	function drawTriS(p1, p2, p3){
-		context.beginPath();
-		context.moveTo( p1[0], p1[1]);
-		context.lineTo( p2[0], p2[1]);
-		context.lineTo( p3[0], p3[1]);
-		context.closePath();
-		context.stroke();
-	}
-
-
-	function drawTriClip(p1, p2, p3){
-		context.beginPath();
-		context.moveTo( p1[0], p1[1]);
-		context.lineTo( p2[0], p2[1]);
-		context.lineTo( p3[0], p3[1]);
-		context.closePath();
-	}
-	
-	// 四角形を描画する関数
-	// 引数は物理座標の2次元ベクトル
-	function drawSquare(p1,p2,p3,p4){
-		context.beginPath();
-		context.moveTo( p1[0], p1[1]);
-		context.lineTo( p2[0], p2[1]);
-		context.lineTo( p3[0], p3[1]);
-		context.lineTo( p4[0], p4[1]);
-		context.closePath();
-		context.stroke();
-		context.fill();
-	}
-	
-	// 四角形を描画する関数
-	// 引数は物理座標の2次元ベクトル
-	function drawSquareS(p1,p2,p3,p4){
-		context.beginPath();
-		context.moveTo( p1[0], p1[1]);
-		context.lineTo( p2[0], p2[1]);
-		context.lineTo( p3[0], p3[1]);
-		context.lineTo( p4[0], p4[1]);
-		context.closePath();
-		context.stroke();
-	}
-	
-	// 円を描画する関数
-	// 引数1 x: 物理座標系の位置x
-	// 引数2 y: 物理座標系の位置y
-	// 引数3 radius: 物理座標系における半径
-	function drawCircle(p, radius){
-		context.beginPath();
-		context.arc( p[0], p[1], radius, 0, 2*Math.PI, true);
-		context.stroke();
-		context.fill();
-	}
-	function drawCircleS(p, radius){
-		context.beginPath();
-		context.arc( p[0], p[1], radius, 0, 2*Math.PI, true);
-		context.stroke();
-	}
-
-	// 変形前後の三角形からあふぃん変換行列を計算する関数
-	// 引数1: 変形前の三角形頂点の位置ベクトル 3 x 2
-	// 引数2: 変形後の三角形頂点の位置ベクトル 3 x 2
-	function getAffineMat(tri1, tri2) {
-		var after = [ 
-			[tri2[1][0] - tri2[0][0], tri2[2][0] - tri2[0][0] ],
-			[tri2[1][1] - tri2[0][1], tri2[2][1] - tri2[0][1] ]
-		]
-		var befor = [
-			[tri1[1][0] - tri1[0][0], tri1[2][0] - tri1[0][0]],
-			[tri1[1][1] - tri1[0][1], tri1[2][1] - tri1[0][1]]
-		]
-		var befinv = numeric.inv(befor);
-		var affmat = numeric.dot(after, befinv);
-		var rel = numeric.sub(tri2[0], tri1[0]);
-		var aff = [affmat[0][0], affmat[1][0], affmat[0][1], affmat[1][1], rel[0], rel[1]];
-		return aff;
-	}
 	
 	
 } );
