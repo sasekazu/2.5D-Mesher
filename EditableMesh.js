@@ -235,6 +235,5 @@ EditableMesh.prototype.setBoundary = function(clickState, mousePos){
 		this.ndNormal[snd] = numeric.div(ndNormalTmp, ndNmNorm);
 	}
 
-
 }
 

@@ -9,6 +9,17 @@
 
 $(document).ready(function () {
 
+	// ブラウザ判定, 警告メッセージ
+	var ua = window.navigator.userAgent.toLowerCase();
+	var ver = window.navigator.appVersion.toLowerCase();
+	if (ua.indexOf('chrome') != -1){
+		// chromeはOK
+	}else if (ua.indexOf('firefox') != -1){
+		// firefoxはOK
+	} else {
+		alert("Google Chrome と Firefox 以外のブラウザは非推奨です．IEは非対応ですm(_ _)m．");
+	}
+
 	// 2dコンテキストを取得
 	var canvas = $("#mViewCanvas");
 	var cvs = document.getElementById('mViewCanvas');	// イベント設定用
@@ -150,9 +161,9 @@ $(document).ready(function () {
 				message = "メッシュ生成中";
 				generateMeshFunc();
 				break;
-			case "edit":
-				message = "メッシュ編集モード";
-				editFunc();
+			case "meshComplete":
+				message = "メッシュ生成終了";
+				meshCompleteFunc();
 				break;
 		}
 		$("#message").text(message);
@@ -261,7 +272,8 @@ $(document).ready(function () {
 		var imgFlag = $('#imgCheckBox').is(':checked');
 		if(!mesh.addPoint()) {
 			mesh.meshGen();
-			state = "edit";
+			state = "meshComplete";
+			mesh25d = new Mesh25d(mesh.dPos, mesh.tri, 100);
 			$('#saveButton').show("slow");
 		}
 
@@ -301,12 +313,12 @@ $(document).ready(function () {
 	}
 
 	//////////////////////////////////////////////////////////
-	//////  編集処理
+	//////  メッシュ生成完了後の描画処理
 	//////////////////////////////////////////////////////
-	function editFunc() {
+	function meshCompleteFunc() {
+
 		var imgFlag = $('#imgCheckBox').is(':checked');
 	
-		
 		// 描画リセット
 		context.setTransform(1, 0, 0, 1, 0, 0);
 		context.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -378,7 +390,7 @@ $(document).ready(function () {
 	// 保存ボタン
 	$("#saveButton").click(function(){
 		console.log("save");
-	    var text = "test";
+		var text = mesh25d.stl;
 		var blob = new Blob([text],{"type" : "text/html"});
 		var a = document.createElement('a');
 		var label = document.createTextNode('ダウンロード（右クリックから保存し，ファイル名を拡張子stlに変更してください）');
@@ -417,9 +429,6 @@ $(document).ready(function () {
 		// ホールドノードの決定
 		if(state == "editOutLine") {
 			outline.selectHoldNodes(mousePos);
-		}
-		else if(state == "edit") {
-			editMesh.selectHoldNodes(mousePos);
 		}
 	}
 	
