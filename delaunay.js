@@ -162,6 +162,8 @@ DelaunayGen.prototype.addPoint = function(){
 		var dist = numeric.norm2(distVec);
 		
 		if(dist < c.rad	){
+			// 境界の辺が削除されないようにする
+			// (テスト中)
 			/*
 			var boundaryCnt = 0;
 			for(var j=0; j<3; ++j) {
@@ -225,7 +227,16 @@ DelaunayGen.prototype.addPoint = function(){
 		this.tri.push(newTri);
 	}
 	
-	var tritemp2 = numeric.mul(this.tri,1);
+	// tricenterGの作成
+	tricenterG = [];
+	triInOut = [];
+	for(var i=0; i<this.tri.length; i++){
+		var tricenter = numeric.add(this.dPos[(this.tri[i][0])], this.dPos[(this.tri[i][1])]);
+		tricenter = numeric.add(tricenter, this.dPos[this.tri[i][2]]);
+		tricenter = numeric.div(tricenter, 3);
+		tricenterG.push(tricenter);
+		triInOut.push(this.outline.pointInOrOut(tricenter));
+	}
 	
 	this.step++;
 	return true;
@@ -245,12 +256,16 @@ DelaunayGen.prototype.meshGen = function(){
 	
 	// 輪郭の外側の三角形を削除する
 	var remTri = [];
+	tricenterG = [];
+	triInOut = [];
 	for(var i=0; i<this.tri.length; i++){
 		var tricenter = numeric.add(this.dPos[(this.tri[i][0])], this.dPos[(this.tri[i][1])]);
 		tricenter = numeric.add(tricenter, this.dPos[this.tri[i][2]]);
 		tricenter = numeric.div(tricenter, 3);
+		tricenterG.push(tricenter);
+		triInOut.push(this.outline.pointInOrOut(tricenter));
 		if(!this.outline.pointInOrOut(tricenter)) {
-				remTri.push(i);
+			remTri.push(i);
 		}
 	}
 

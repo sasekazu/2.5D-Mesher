@@ -137,6 +137,7 @@ ClosedCurve.prototype.addPoint = function (pos) {
 		}
 		
 		// 線が長すぎる場合、線分を分割する
+		/*
 		if (this.lines[this.lines.length-1].len > this.minlen*2) {
 			var div = ~~(this.lines[this.lines.length - 1].len/this.minlen);
 			var dvec = numeric.div(this.lines[this.lines.length-01].vec,div);
@@ -148,6 +149,7 @@ ClosedCurve.prototype.addPoint = function (pos) {
 				this.lines.push(nl);
 			}
 		}
+		*/
 		
 	}
 }
@@ -223,6 +225,12 @@ function Outline() {
 	this.ymin = 0;
 	this.xmax = 0;
 	this.ymax = 0;
+
+	// マウスでつまむためのメンバ変数
+	this.holdNode = [];
+	this.mousePosClick = [];
+	this.uClick = []; // setBoundaryのためのメンバ, クリック時のUベクトル
+	this.gripRad = 10; // setBoudaryにおける周辺拘束領域の半径
 }
 
 // 閉曲線の追加
@@ -312,3 +320,80 @@ Outline.prototype.pointInOrOut = function (p, mode) {
 	return countxp%2==1;
 
 }
+
+
+// クリック時の処理
+Outline.prototype.selectHoldNodes = function(mousePos){	
+
+	this.mousePosClick = new Array(mousePos.length);
+	for(var i=0; i<mousePos.length; i++){
+		this.mousePosClick[i] = new Array(2);
+		this.mousePosClick[i][0] = mousePos[i][0];
+		this.mousePosClick[i][1] = mousePos[i][1];
+	}
+		
+	this.holdNode = new Array(mousePos.length);
+	for(var i=0; i<mousePos.length; i++){
+		this.holdNode[i] = [];				
+	}
+
+	this.uClick = new Array(mousePos.length);
+	for(var i = 0; i < mousePos.length; i++) {
+		this.uClick[i] = [];
+	}
+	
+	var dif;
+	var dist;
+	var nearNd;
+	var minDist;
+	for(var cl=0; cl<mousePos.length; cl++){
+		dif = numeric.sub(mousePos[cl],this.closedCurves[0].lines[0].start);
+		dist = numeric.norm2(dif);
+		nearNd = [0, 0];
+		minDist =  dist;
+		for(var cc = 0; cc < this.closedCurves.length; ++cc) {
+			for(var l = 0; l < this.closedCurves[cc].lines.length; ++l) {
+				dif = numeric.sub(mousePos[cl], this.closedCurves[cc].lines[l].start);
+				dist = numeric.norm2(dif);
+				if(minDist > dist) {
+					minDist = dist;
+					nearNd = [cc, l];
+				}
+			}
+		}
+		if(minDist < this.gripRad) {
+			this.holdNode[cl] = numeric.clone(nearNd);
+			this.uClick[cl] = numeric.sub(this.closedCurves[nearNd[0]].lines[nearNd[1]].start, mousePos[cl]);
+		}
+	}
+}
+
+
+// 境界条件の設定
+Outline.prototype.setBoundary = function(clickState, mousePos){
+	
+	if(mousePos.length != this.holdNode.length)
+		this.selectHoldNodes(mousePos);
+	
+	// クリックノードの境界条件
+	if(clickState == "Down"){
+		for(var cl=0; cl<mousePos.length; cl++){
+			if(this.holdNode[cl].length === 0) {
+				continue;
+			}
+			var cc = this.holdNode[cl][0];
+			var l = this.holdNode[cl][1];
+			var newStart = numeric.add(this.uClick[cl], mousePos[cl]);
+			this.closedCurves[cc].lines[l].setStart(newStart);
+			if(l > 0) {
+				var newEnd = numeric.add(this.uClick[cl], mousePos[cl]);
+				this.closedCurves[cc].lines[l-1].setEnd(newEnd);
+			} else {
+				var cclen = this.closedCurves[cc].lines.length;
+				var newEnd = numeric.add(this.uClick[cl], mousePos[cl]);
+				this.closedCurves[cc].lines[cclen-1].setEnd(newEnd);
+			}
+		}
+	}
+}
+

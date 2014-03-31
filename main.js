@@ -159,6 +159,20 @@ $(document).ready(function () {
 		var time1 = new Date();
 		//console.log(time1-time0 + " [ms]");
 
+		// tricenterGの描画
+		for(var i = 0; i < tricenterG.length; i++) {
+			if(triInOut[i]) {
+				context.fillStyle = 'blue';
+				context.strokeStyle = 'blue';
+			} else {
+				context.fillStyle = 'red'; 
+				context.strokeStyle = 'red';
+			}
+			
+			drawCircle(context, tricenterG[i], 1);
+		}
+
+
 		setTimeout(mainloop, 30);
 	}
 	
@@ -204,6 +218,8 @@ $(document).ready(function () {
 	////////　 アウトライン作成関数
 	/////////////////////////////////////////////////////////
 	function editOutLineFunc() {
+		
+		outline.setBoundary(clickState, mousePos);	
 
 		// 描画実行
 		drawOutLine();
@@ -257,9 +273,9 @@ $(document).ready(function () {
 	function generateMeshFunc() {
 		var imgFlag = $('#imgCheckBox').is(':checked');
 		if(!mesh.addPoint()) {
-			mesh.meshGen();
-			state = "edit";
-			editMesh = new EditableMesh(mesh.dPos, mesh.tri, outline);
+			//mesh.meshGen();
+			//state = "edit";
+			//editMesh = new EditableMesh(mesh.dPos, mesh.tri, outline);
 		}
 
 		// 描画リセット
@@ -277,6 +293,18 @@ $(document).ready(function () {
 		context.strokeStyle=color;
 		for (var c = 0; c < outline.closedCurves.length; c++) {
 			var cvtmp = outline.closedCurves[c];
+			for (var i = 0; i < cvtmp.lines.length; ++i) {
+				drawLine(context, cvtmp.lines[i].start, cvtmp.lines[i].end);
+			}
+		}		
+		context.lineWidth = 1.0;
+
+		context.lineWidth = 4.0;
+		var color = 'rgb(20,20,20)';
+		context.fillStyle=color;
+		context.strokeStyle=color;
+		for (var c = 0; c < mesh.outline.closedCurves.length; c++) {
+			var cvtmp = mesh.outline.closedCurves[c];
 			for (var i = 0; i < cvtmp.lines.length; ++i) {
 				drawLine(context, cvtmp.lines[i].start, cvtmp.lines[i].end);
 			}
@@ -344,15 +372,18 @@ $(document).ready(function () {
 		cv = new ClosedCurve(minlen);
 		outline = new Outline();
 		state = "drawOutLine";
+		tricenterG = [];
+		triInOut = [];
 	});
 
 	$("#drawOutLineButton").click(function () {
-		state = "drawOutLine";
+		if(state == "drawOutLine") {
+			state = "editOutLine";
+		} else {
+			state = "drawOutLine";
+		}
 	});
 
-	$("#editOutLineButton").click(function () {
-		state = "editOutLine";
-	});
 
 	// メッシュボタン
 	$("#meshButton").click(function () {
@@ -372,6 +403,12 @@ $(document).ready(function () {
 		state = "generateMesh";
 	});
 
+	$("#meshGenButton").click(function (){
+		mesh.meshGen();
+		state = "edit";
+		editMesh = new EditableMesh(mesh.dPos, mesh.tri, outline);
+
+	});
 	
 	//////////////////////////////////////////////////////////
 	//////  マウス関連イベント群
@@ -398,8 +435,12 @@ $(document).ready(function () {
 		clickState = "Down";
 		
 		// ホールドノードの決定
-		if(state == "edit")
+		if(state == "editOutLine") {
+			outline.selectHoldNodes(mousePos);
+		}
+		else if(state == "edit") {
 			editMesh.selectHoldNodes(mousePos);
+		}
 	}
 	
 	// クリックまたはタッチのムーブに対する処理

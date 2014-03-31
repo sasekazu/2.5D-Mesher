@@ -4,6 +4,11 @@
 		<meta charset="utf-8">
 		<title>2.5D Mesher</title>
 		<link rel="stylesheet" type="text/css" href="index.css">
+	
+		<script>
+			var tricenterG = [];
+			var triInOut = [];
+		</script>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 		<script type="text/javascript" src="numeric-1.2.6.min.js"></script>
 		<script type="text/javascript" src="outline.js"></script>    
@@ -20,9 +25,9 @@
 		</div>
 		<div>
 			<input id="resetButton" value="リセット" type="button" />
-			<input id="drawOutLineButton" value="輪郭追加" type="button" />
-			<input id="editOutLineButton" value="輪郭編集" type="button" />
+			<input id="drawOutLineButton" value="輪郭作成モード切替(追加/編集)" type="button" />
 			<input id="meshButton" value="メッシュ生成" type="button" />
+			<input id="meshGenButton" value="meshGen" type="button" />
 		</div>
 		<div>
 			<label><input id="imgCheckBox" type="checkbox">画像表示</label><br />
