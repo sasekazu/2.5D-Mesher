@@ -6,3 +6,11 @@
 canvas {
   border: solid black 1px;
 }
+
+#messageBox{
+    width: 200px;  
+    height: 30px;
+    position: absolute;  
+    top: 15px; 
+    left: 15px;  
+}

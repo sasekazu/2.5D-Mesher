@@ -3,6 +3,7 @@
 /// <reference path="numeric-1.2.6.min.js" />
 /// <reference path="outline.js" />
 /// <reference path="delaunay.js" />
+/// <reference path="EditableMesh.js" />
 
 
 $(document).ready(function () {
@@ -38,13 +39,15 @@ $(document).ready(function () {
 
 	// アウトライン作成用変数
 	var outline = new Outline();
-	var minlen=5;
+	var minlen=20;
 	var cv;
 	var drawingFlag = true;    // 書き終わった後にクリックしなおしてから次の描画を始めるためのフラグ
 
 	// メッシュ作成用変数
 	var mesh;
 
+	// メッシュ編集用変数
+	var editMesh;
 
 	/////////////////////////////////
 	// 画像の読み込み
@@ -95,9 +98,6 @@ $(document).ready(function () {
 
 	// 最初の画像を選択
 	img.src = "miku.png?" + new Date().getTime();
-	//img.src = "donut.jpg?" + new Date().getTime();
-	//img.src = "hachinosu.jpg?" + new Date().getTime();
-	//img.src = "blue.jpg?" + new Date().getTime();
 	
 
 	// 画像が読み込まれたときに実行
@@ -122,7 +122,7 @@ $(document).ready(function () {
 	img.onerror=function(){
 		alert("画像が読み込めません");
 		// メッシュ表示モードにする
-		$("#meshCheckBox").attr("checked", true);
+		$("#imgCheckBox").attr("checked", true);
 		cv = new ClosedCurve(minlen);
 		outline = new Outline();
 		mainloop();
@@ -136,14 +136,22 @@ $(document).ready(function () {
 	function mainloop() {
 
 		var time0 = new Date();
+		var message;
 		switch(state) {
 			case "drawOutLine":
+				message = "輪郭手書きモード";
 				drawOutLineFunc();
 				break;
 			case "generateMesh":
+				message = "メッシュ生成中";
 				generateMeshFunc();
 				break;
+			case "edit":
+				message = "メッシュ編集モード";
+				editFunc();
+				break;
 		}
+		$("#message").text(message);
 		var time1 = new Date();
 		//console.log(time1-time0 + " [ms]");
 
@@ -155,7 +163,7 @@ $(document).ready(function () {
 	////////　 アウトライン作成関数
 	/////////////////////////////////////////////////////////
 	function drawOutLineFunc(){
-		var meshFlag = $('#meshCheckBox').is(':checked');
+		var imgFlag = $('#imgCheckBox').is(':checked');
 		switch (clickState) {
 			case "Down":
 				if (drawingFlag) {
@@ -189,7 +197,7 @@ $(document).ready(function () {
 		context.clearRect(0, 0, canvasWidth, canvasHeight);
 
 		// 全体の写真を描画
-		if(!meshFlag)
+		if(imgFlag)
 			context.drawImage(img, dx, dy, dw, dh);
 
 		context.fillStyle = 'rgb(0, 0, 0)'; // 黒
@@ -225,18 +233,19 @@ $(document).ready(function () {
 	//////  メッシュ生成処理
 	//////////////////////////////////////////////////////
 	function generateMeshFunc() {
-		var meshFlag = $('#meshCheckBox').is(':checked');
+		var imgFlag = $('#imgCheckBox').is(':checked');
 		if(!mesh.addPoint()) {
 			mesh.meshGen();
+			state = "edit";
+			editMesh = new EditableMesh(mesh.dPos, mesh.tri, outline);
 		}
 
 		// 描画リセット
 		context.setTransform(1, 0, 0, 1, 0, 0);
 		context.clearRect(0, 0, canvasWidth, canvasHeight);
-
 		
 		// 全体の写真を描画
-		if(!meshFlag)
+		if(imgFlag)
 			context.drawImage(img, dx, dy, dw, dh);
 
 		// 輪郭全体の描画
@@ -260,8 +269,49 @@ $(document).ready(function () {
 			drawTriS(mesh.dPos[tri[0]], mesh.dPos[tri[1]], mesh.dPos[tri[2]]);
 		}
 
-		return;
+
 	}
+
+	//////////////////////////////////////////////////////////
+	//////  編集処理
+	//////////////////////////////////////////////////////
+	function editFunc() {
+		var imgFlag = $('#imgCheckBox').is(':checked');
+	
+		
+		editMesh.setBoundary(clickState, mousePos);	
+
+		// 描画リセット
+		context.setTransform(1, 0, 0, 1, 0, 0);
+		context.clearRect(0, 0, canvasWidth, canvasHeight);
+		
+		// 全体の写真を描画
+		if(imgFlag)
+			context.drawImage(img, dx, dy, dw, dh);
+
+		// メッシュの描画
+		var color='rgb(200,200,200)';
+		context.strokeStyle=color;
+		for(var i=0; i<editMesh.tri.length; ++i) {
+			var tri=[editMesh.tri[i][0], editMesh.tri[i][1], editMesh.tri[i][2]];
+			drawTriS(editMesh.pos[tri[0]], editMesh.pos[tri[1]], editMesh.pos[tri[2]]);
+		}
+
+		// 輪郭全体の描画
+		context.lineWidth = 4.0;
+		var color = 'rgb(0,0,0)';
+		context.fillStyle=color;
+		context.strokeStyle=color;
+		for(var i = 0; i < editMesh.surEdge.length; ++i) {
+			drawLine(editMesh.pos[editMesh.surEdge[i][0]], editMesh.pos[editMesh.surEdge[i][1]]);
+		}
+		for(var i = 0; i < editMesh.pos.length; ++i) {
+			drawCircle(editMesh.pos[i], 1);
+		}
+		context.lineWidth = 1.0;
+
+	}
+
 
 	//////////////////////////////////////////////////////////
 	//////  イベント処理
@@ -290,15 +340,6 @@ $(document).ready(function () {
 		mesh=new DelaunayGen(outline, minlen);
 
 		state = "generateMesh";
-		/*
-		while(mesh.addPoint()) {
-			;
-		};
-		mesh.meshGen();
-		for(var i=0; i<20; ++i)
-			mesh.laplacianSmoothing();
-			*/
-
 	});
 
 	
@@ -325,7 +366,10 @@ $(document).ready(function () {
 			mousePos.push([canvasX, canvasY]);
 		}
 		clickState = "Down";
-
+		
+		// ホールドノードの決定
+		if(state == "edit")
+			editMesh.selectHoldNodes(mousePos);
 	}
 	
 	// クリックまたはタッチのムーブに対する処理

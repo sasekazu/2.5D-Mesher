@@ -8,19 +8,22 @@
 		<script type="text/javascript" src="numeric-1.2.6.min.js"></script>
 		<script type="text/javascript" src="outline.js"></script>    
 		<script type="text/javascript" src="delaunay.js"></script>    
+		<script type="text/javascript" src="EditableMesh.js"></script>    
 		<script type="text/javascript" src="main.js"></script>    
 	</head>
 	<body>
 		<canvas id="mViewCanvas" width="800" height="500">
 		</canvas>
+		<div id="messageBox">
+			<p id="message"></p>
+		</div>
 		<div>
 			<input id="resetButton" value="リセット" type="button" />
 			<input id="meshButton" value="1.メッシュ生成" type="button" />
 			<input id="physicsButton" value="2.物理計算" type="button" />
 		</div>
 		<div>
-			<label><input id="meshCheckBox" type="checkbox" checked>メッシュ表示</label><br />
-			<label><input id="dataCheckBox" type="checkbox" checked>データ可視化</label><br />
+			<label><input id="imgCheckBox" type="checkbox">画像表示</label><br />
 			<input id="uploadFile" name="image" type="file" />
 		</div>
 </body>

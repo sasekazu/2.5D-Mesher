@@ -27,6 +27,7 @@ LineSeg.prototype.setStart = function(st){
 	this.vec = numeric.sub(this.end, this.start);
 	this.len = numeric.norm2(this.vec);
 }
+
 LineSeg.prototype.setEnd = function(ed){
 	this.end[0] = ed[0];
 	this.end[1] = ed[1];
@@ -127,7 +128,7 @@ ClosedCurve.prototype.addPoint = function (pos) {
 		if (this.lines.length > 2 && !doneFlag) {
 			var srel = numeric.sub(pos, this.lines[0].start);
 			var slen = numeric.norm2(srel);
-			if (slen < this.minlen * 0.5) {
+			if (slen < this.minlen) {
 				this.closedFlag = true;
 				this.endpos = numeric.mul(this.lines[0].start,1);
 				this.lines[this.lines.length-1].setEnd(this.endpos);
@@ -136,7 +137,6 @@ ClosedCurve.prototype.addPoint = function (pos) {
 		}
 		
 		// 線が長すぎる場合、線分を分割する
-		/*
 		if (this.lines[this.lines.length-1].len > this.minlen*2) {
 			var div = ~~(this.lines[this.lines.length - 1].len/this.minlen);
 			var dvec = numeric.div(this.lines[this.lines.length-01].vec,div);
@@ -148,7 +148,6 @@ ClosedCurve.prototype.addPoint = function (pos) {
 				this.lines.push(nl);
 			}
 		}
-		*/
 		
 	}
 }
