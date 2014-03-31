@@ -204,6 +204,7 @@ EditableMesh.prototype.setBoundary = function(clickState, mousePos){
 //				u[2*nd]   = this.uClick[cl][2*nd]+mousePos[cl][0]-this.mousePosClick[cl][0];
 //				u[2*nd+1] = this.uClick[cl][2*nd+1]+mousePos[cl][1]-this.mousePosClick[cl][1];
 				this.pos[nd][0] = this.initpos[nd][0]+mousePos[cl][0]-this.mousePosClick[cl][0];
+				this.pos[nd][1] = this.initpos[nd][1]+mousePos[cl][1]-this.mousePosClick[cl][1];
 			}
 		}
 	}

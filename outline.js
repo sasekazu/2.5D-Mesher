@@ -137,7 +137,6 @@ ClosedCurve.prototype.addPoint = function (pos) {
 		}
 		
 		// 線が長すぎる場合、線分を分割する
-		/*
 		if (this.lines[this.lines.length-1].len > this.minlen*2) {
 			var div = ~~(this.lines[this.lines.length - 1].len/this.minlen);
 			var dvec = numeric.div(this.lines[this.lines.length-01].vec,div);
@@ -149,7 +148,6 @@ ClosedCurve.prototype.addPoint = function (pos) {
 				this.lines.push(nl);
 			}
 		}
-		*/
 		
 	}
 }

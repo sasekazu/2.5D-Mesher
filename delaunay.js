@@ -65,6 +65,7 @@ function DelaunayGen(outline, size){
 	this.dPos = new Array();	// 動的に変わる点
 	this.tri = new Array();	// 三角形の数 x 3(三角形頂点の点番号)
 	this.boundary = []; // 頂点が境界かどうかの判別フラグ 0 or 1
+	this.triInOut = []; // triに対応する三角形が輪郭の内側ならばtrueを格納する配列
 	this.init();
 	this.bigTri();
 	
@@ -227,15 +228,13 @@ DelaunayGen.prototype.addPoint = function(){
 		this.tri.push(newTri);
 	}
 	
-	// tricenterGの作成
-	tricenterG = [];
-	triInOut = [];
+	// triInOutの作成
+	this.triInOut = [];
 	for(var i=0; i<this.tri.length; i++){
 		var tricenter = numeric.add(this.dPos[(this.tri[i][0])], this.dPos[(this.tri[i][1])]);
 		tricenter = numeric.add(tricenter, this.dPos[this.tri[i][2]]);
 		tricenter = numeric.div(tricenter, 3);
-		tricenterG.push(tricenter);
-		triInOut.push(this.outline.pointInOrOut(tricenter));
+		this.triInOut.push(this.outline.pointInOrOut(tricenter));
 	}
 	
 	this.step++;
@@ -256,14 +255,12 @@ DelaunayGen.prototype.meshGen = function(){
 	
 	// 輪郭の外側の三角形を削除する
 	var remTri = [];
-	tricenterG = [];
-	triInOut = [];
+	this.triInOut = [];
 	for(var i=0; i<this.tri.length; i++){
 		var tricenter = numeric.add(this.dPos[(this.tri[i][0])], this.dPos[(this.tri[i][1])]);
 		tricenter = numeric.add(tricenter, this.dPos[this.tri[i][2]]);
 		tricenter = numeric.div(tricenter, 3);
-		tricenterG.push(tricenter);
-		triInOut.push(this.outline.pointInOrOut(tricenter));
+		this.triInOut.push(this.outline.pointInOrOut(tricenter));
 		if(!this.outline.pointInOrOut(tricenter)) {
 			remTri.push(i);
 		}

@@ -11,6 +11,10 @@ canvas {
     width: 200px;  
     height: 30px;
     position: absolute;  
-    top: 15px; 
+    top: 485px; 
     left: 15px;  
+}
+
+#saveButton{
+    display:none;
 }

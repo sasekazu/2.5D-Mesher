@@ -39,15 +39,15 @@ $(document).ready(function () {
 
 	// アウトライン作成用変数
 	var outline = new Outline();
-	var minlen=20;
+	var minlen=15;
 	var cv;
 	var drawingFlag = true;    // 書き終わった後にクリックしなおしてから次の描画を始めるためのフラグ
 
 	// メッシュ作成用変数
 	var mesh;
 
-	// メッシュ編集用変数
-	var editMesh;
+	// 2.5次元メッシュ用変数
+	var mesh25d;
 
 	/////////////////////////////////
 	// 画像の読み込み
@@ -159,19 +159,6 @@ $(document).ready(function () {
 		var time1 = new Date();
 		//console.log(time1-time0 + " [ms]");
 
-		// tricenterGの描画
-		for(var i = 0; i < tricenterG.length; i++) {
-			if(triInOut[i]) {
-				context.fillStyle = 'blue';
-				context.strokeStyle = 'blue';
-			} else {
-				context.fillStyle = 'red'; 
-				context.strokeStyle = 'red';
-			}
-			
-			drawCircle(context, tricenterG[i], 1);
-		}
-
 
 		setTimeout(mainloop, 30);
 	}
@@ -273,9 +260,9 @@ $(document).ready(function () {
 	function generateMeshFunc() {
 		var imgFlag = $('#imgCheckBox').is(':checked');
 		if(!mesh.addPoint()) {
-			//mesh.meshGen();
-			//state = "edit";
-			//editMesh = new EditableMesh(mesh.dPos, mesh.tri, outline);
+			mesh.meshGen();
+			state = "edit";
+			$('#saveButton').show("slow");
 		}
 
 		// 描画リセット
@@ -286,19 +273,20 @@ $(document).ready(function () {
 		if(imgFlag)
 			context.drawImage(img, dx, dy, dw, dh);
 
-		// 輪郭全体の描画
-		context.lineWidth = 8.0;
-		var color = 'rgb(200,200,200)';
-		context.fillStyle=color;
-		context.strokeStyle=color;
-		for (var c = 0; c < outline.closedCurves.length; c++) {
-			var cvtmp = outline.closedCurves[c];
-			for (var i = 0; i < cvtmp.lines.length; ++i) {
-				drawLine(context, cvtmp.lines[i].start, cvtmp.lines[i].end);
+		// メッシュの描画
+		context.strokeStyle='black';
+		context.fillStyle='lightseagreen';
+		context.globalAlpha = 0.7;
+		for(var i=0; i<mesh.tri.length; ++i) {
+			var tri=[mesh.tri[i][0], mesh.tri[i][1], mesh.tri[i][2]];
+			if(mesh.triInOut[i]) {
+				drawTri(context, mesh.dPos[tri[0]], mesh.dPos[tri[1]], mesh.dPos[tri[2]]);
 			}
-		}		
-		context.lineWidth = 1.0;
+			drawTriS(context, mesh.dPos[tri[0]], mesh.dPos[tri[1]], mesh.dPos[tri[2]]);
+		}
+		context.globalAlpha = 1.0;
 
+		// 輪郭全体の描画
 		context.lineWidth = 4.0;
 		var color = 'rgb(20,20,20)';
 		context.fillStyle=color;
@@ -310,16 +298,6 @@ $(document).ready(function () {
 			}
 		}		
 		context.lineWidth = 1.0;
-
-		// メッシュの描画
-		var color='rgb(0,0,0)';
-		context.strokeStyle=color;
-		for(var i=0; i<mesh.tri.length; ++i) {
-			var tri=[mesh.tri[i][0], mesh.tri[i][1], mesh.tri[i][2]];
-			drawTriS(context, mesh.dPos[tri[0]], mesh.dPos[tri[1]], mesh.dPos[tri[2]]);
-		}
-
-
 	}
 
 	//////////////////////////////////////////////////////////
@@ -329,37 +307,30 @@ $(document).ready(function () {
 		var imgFlag = $('#imgCheckBox').is(':checked');
 	
 		
-		editMesh.setBoundary(clickState, mousePos);	
-
 		// 描画リセット
 		context.setTransform(1, 0, 0, 1, 0, 0);
 		context.clearRect(0, 0, canvasWidth, canvasHeight);
 		
 		// 全体の写真を描画
-		if(imgFlag)
+		if(imgFlag) {
 			context.drawImage(img, dx, dy, dw, dh);
+		}
 
 		// メッシュの描画
-		var color='rgb(200,200,200)';
-		context.strokeStyle=color;
-		for(var i=0; i<editMesh.tri.length; ++i) {
-			var tri=[editMesh.tri[i][0], editMesh.tri[i][1], editMesh.tri[i][2]];
-			drawTriS(context, editMesh.pos[tri[0]], editMesh.pos[tri[1]], editMesh.pos[tri[2]]);
+		///context.strokeStyle='gray';
+		context.strokeStyle='lightseagreen';
+		context.fillStyle='lightseagreen';
+		if(imgFlag) {
+			context.globalAlpha = 0.7;
 		}
-
-		// 輪郭全体の描画
-		context.lineWidth = 4.0;
-		var color = 'rgb(0,0,0)';
-		context.fillStyle=color;
-		context.strokeStyle=color;
-		for(var i = 0; i < editMesh.surEdge.length; ++i) {
-			drawLine(context, editMesh.pos[editMesh.surEdge[i][0]], editMesh.pos[editMesh.surEdge[i][1]]);
+		for(var i=0; i<mesh.tri.length; ++i) {
+			var tri=[mesh.tri[i][0], mesh.tri[i][1], mesh.tri[i][2]];
+			drawTri(context, mesh.dPos[tri[0]], mesh.dPos[tri[1]], mesh.dPos[tri[2]]);
+			drawTriS(context, mesh.dPos[tri[0]], mesh.dPos[tri[1]], mesh.dPos[tri[2]]);
 		}
-		for(var i = 0; i < editMesh.pos.length; ++i) {
-			drawCircle(context, editMesh.pos[i], 1);
+		if(imgFlag) {
+			context.globalAlpha = 1.0;
 		}
-		context.lineWidth = 1.0;
-
 	}
 
 
@@ -372,18 +343,18 @@ $(document).ready(function () {
 		cv = new ClosedCurve(minlen);
 		outline = new Outline();
 		state = "drawOutLine";
-		tricenterG = [];
-		triInOut = [];
+		$('#saveButton').hide();
 	});
 
+	// 輪郭モード切替ボタン
 	$("#drawOutLineButton").click(function () {
 		if(state == "drawOutLine") {
 			state = "editOutLine";
 		} else {
 			state = "drawOutLine";
 		}
+		$('#saveButton').hide();
 	});
-
 
 	// メッシュボタン
 	$("#meshButton").click(function () {
@@ -401,14 +372,23 @@ $(document).ready(function () {
 		mesh=new DelaunayGen(outline, minlen);
 
 		state = "generateMesh";
+		$('#saveButton').hide();
 	});
 
-	$("#meshGenButton").click(function (){
-		mesh.meshGen();
-		state = "edit";
-		editMesh = new EditableMesh(mesh.dPos, mesh.tri, outline);
+	// 保存ボタン
+	$("#saveButton").click(function(){
+		console.log("save");
+	    var text = "test";
+		var blob = new Blob([text],{"type" : "text/html"});
+		var a = document.createElement('a');
+		var label = document.createTextNode('ダウンロード（右クリックから保存し，ファイル名を拡張子stlに変更してください）');
+		a.setAttribute('href', window.URL.createObjectURL(blob));
+		a.setAttribute('target', '_blank');
+		a.appendChild(label);
+		this.parentNode.insertBefore(a, this.nextSibling);
 
 	});
+
 	
 	//////////////////////////////////////////////////////////
 	//////  マウス関連イベント群
