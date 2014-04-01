@@ -81,7 +81,7 @@ $(document).ready(function () {
 		reader.onload=function (evt) {
 			// 画像がloadされた後に、canvasに描画する
 			img.onload=function () {
-				imgSc=0.7;
+				imgSc=0.5;
 				if(img.height<img.width) {
 					dx=0.5*(1-imgSc)*canvasWidth;
 					dy=0.5*(canvasHeight-imgSc*img.height/img.width*canvasWidth);
@@ -98,6 +98,7 @@ $(document).ready(function () {
 				console.log("area "+(dw*dh));
 				cv=new ClosedCurve(minlen);
 				outline=new Outline();
+				$("#imgCheckBox").attr("checked", true ) // 画像表示チェックを入れる
 				mainloop();
 			}
 			// 画像のURLをソースに設定
