@@ -355,17 +355,19 @@ $(document).ready(function () {
 		cv = new ClosedCurve(minlen);
 		outline = new Outline();
 		state = "drawOutLine";
-		$('#saveButton').hide();
+		hideAndRemoveSaveEle();
 	});
 
-	// 輪郭モード切替ボタン
+	// 輪郭追加ボタン
 	$("#drawOutLineButton").click(function () {
-		if(state == "drawOutLine") {
-			state = "editOutLine";
-		} else {
-			state = "drawOutLine";
-		}
-		$('#saveButton').hide();
+		state = "drawOutLine";
+		hideAndRemoveSaveEle();
+	});
+
+	// 輪郭編集ボタン
+	$("#editOutLineButton").click(function () {
+		state = "editOutLine";
+		hideAndRemoveSaveEle();
 	});
 
 	// メッシュボタン
@@ -382,24 +384,31 @@ $(document).ready(function () {
 		}
 
 		mesh=new DelaunayGen(outline, minlen);
+		hideAndRemoveSaveEle();
 
 		state = "generateMesh";
-		$('#saveButton').hide();
 	});
 
 	// 保存ボタン
 	$("#saveButton").click(function(){
-		console.log("save");
 		var text = mesh25d.stl;
 		var blob = new Blob([text],{"type" : "text/html"});
 		var a = document.createElement('a');
 		var label = document.createTextNode('ダウンロード（右クリックから保存し，ファイル名を拡張子stlに変更してください）');
 		a.setAttribute('href', window.URL.createObjectURL(blob));
 		a.setAttribute('target', '_blank');
+		a.id = "downloadLink";
 		a.appendChild(label);
 		this.parentNode.insertBefore(a, this.nextSibling);
-
 	});
+
+	function hideAndRemoveSaveEle() {
+		$('#saveButton').hide();
+		var rem = document.getElementById("downloadLink");
+		if(rem) {
+			rem.parentNode.removeChild(rem);
+		}
+	}
 
 	
 	//////////////////////////////////////////////////////////
