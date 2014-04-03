@@ -18,19 +18,32 @@ function drawAxis(context){
 	context.stroke();
 }
 	
-function drawGrid(context){
-	drawSquareS([-1,-1],[1,-1],[1,1],[-1,1]);
+function drawMainGrid(context, scale){
+	drawSquareS(context,[-1,-1],[1,-1],[1,1],[-1,1]);
 	context.fillStyle = 'rgb(0, 0, 0)'; // 黒
 	context.font = "10px 'Arial'";
 	context.textAlign = "left";
-	p1 = [0,1.0];
+	p1 = [0,scale*1.0];
 	context.fillText("1.0", p1[0], p1[1]);
-	p1 = [1.0,0];
+	p1 = [scale*1.0,0];
 	context.fillText("1.0", p1[0], p1[1]);
-	p1 = [0,-1.0];
+	p1 = [0,scale*-1.0];
 	context.fillText("-1.0", p1[0], p1[1]);
-	p1 = [-1.0,0];
+	p1 = [scale*-1.0,0];
 	context.fillText("-1.0", p1[0], p1[1]);
+}
+
+function drawGrid(context, x0, y0, x1, y1, dx, dy) {
+	var nx = (x1-x0)/dx + 1;
+	nx = Math.ceil(nx);
+	var ny = (y1-y0)/dy + 1;
+	ny = Math.ceil(ny);
+	for(var i = 0; i < nx; i++) {
+		drawLine(context, [x0+dx*i, y0], [x0+dx*i, y1]);
+	}
+	for(var i = 0; i < ny; i++) {
+		drawLine(context, [x0, y0+dy*i], [x1, y0+dy*i]);
+	}
 }
 	
 // 線を描画する関数

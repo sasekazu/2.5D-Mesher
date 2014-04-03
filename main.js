@@ -60,6 +60,9 @@ $(document).ready(function () {
 	// 2.5次元メッシュ用変数
 	var mesh25d;
 
+	// スケーリング変数
+	var mmperpixel = 0.1;
+
 	/////////////////////////////////
 	// 画像の読み込み
 	//////////////////////////////////
@@ -155,7 +158,7 @@ $(document).ready(function () {
 				drawOutLineFunc();
 				break;
 			case "editOutLine":
-				message = "輪郭編集モード";
+				message = "輪郭修正モード";
 				editOutLineFunc();
 				break;
 			case "generateMesh":
@@ -168,6 +171,8 @@ $(document).ready(function () {
 				break;
 		}
 		$("#message").text(message);
+
+
 		var time1 = new Date();
 		//console.log(time1-time0 + " [ms]");
 
@@ -238,6 +243,14 @@ $(document).ready(function () {
 		if(imgFlag)
 			context.drawImage(img, dx, dy, dw, dh);
 
+		// グリッドの表示
+		var gridFlag = $('#gridCheckBox').is(':checked');
+		if(gridFlag) {
+			context.fillStyle = 'gray'; 
+			context.strokeStyle = 'gray';
+			drawGrid(context, 0, 0, canvasWidth, canvasHeight, 10/mmperpixel, 10/mmperpixel);
+		}
+
 		context.fillStyle = 'rgb(0, 0, 0)'; // 黒
 		context.strokeStyle = 'rgb(0, 0, 0)'; // 黒
 
@@ -274,8 +287,8 @@ $(document).ready(function () {
 		if(!mesh.addPoint()) {
 			mesh.meshGen();
 			state = "meshComplete";
-			mesh25d = new Mesh25d(mesh.dPos, mesh.tri, 100);
-			$('#saveButton').show("slow");
+			mesh25d = new Mesh25d(mesh.dPos, mesh.tri);
+			$('#saveDiv').show("slow");
 		}
 
 		// 描画リセット
@@ -285,6 +298,14 @@ $(document).ready(function () {
 		// 全体の写真を描画
 		if(imgFlag)
 			context.drawImage(img, dx, dy, dw, dh);
+
+		// グリッドの表示
+		var gridFlag = $('#gridCheckBox').is(':checked');
+		if(gridFlag) {
+			context.fillStyle = 'gray'; 
+			context.strokeStyle = 'gray';
+			drawGrid(context, 0, 0, canvasWidth, canvasHeight, 10/mmperpixel, 10/mmperpixel);
+		}
 
 		// メッシュの描画
 		context.strokeStyle='black';
@@ -327,6 +348,14 @@ $(document).ready(function () {
 		// 全体の写真を描画
 		if(imgFlag) {
 			context.drawImage(img, dx, dy, dw, dh);
+		}
+
+		// グリッドの表示
+		var gridFlag = $('#gridCheckBox').is(':checked');
+		if(gridFlag) {
+			context.fillStyle = 'gray'; 
+			context.strokeStyle = 'gray';
+			drawGrid(context, 0, 0, canvasWidth, canvasHeight, 10/mmperpixel, 10/mmperpixel);
 		}
 
 		// メッシュの描画
@@ -392,7 +421,9 @@ $(document).ready(function () {
 
 	// 保存ボタン
 	$("#saveButton").click(function(){
-		var text = mesh25d.stl;
+	    var v = $("#thicknessBox").val();
+	    var thickness = Number(v);
+		var text = mesh25d.makeStl(mmperpixel, thickness);
 		var blob = new Blob([text],{"type" : "text/html"});
 		var a = document.createElement('a');
 		var label = document.createTextNode('ダウンロード（右クリックから保存し，ファイル名を拡張子stlに変更してください）');
@@ -404,7 +435,7 @@ $(document).ready(function () {
 	});
 
 	function hideAndRemoveSaveEle() {
-		$('#saveButton').hide();
+		$('#saveDiv').hide();
 		var rem = document.getElementById("downloadLink");
 		if(rem) {
 			rem.parentNode.removeChild(rem);

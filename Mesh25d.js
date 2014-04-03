@@ -9,7 +9,7 @@
 // Mesh25dクラスの定義
 ////////////////////////////////////////////////////////////
 	
-function Mesh25d(initpos, tri, thickness){
+function Mesh25d(initpos, tri){
 	this.pos2d = numeric.clone(initpos);      // 節点現在位置
 	this.initpos = numeric.clone(initpos);  // 節点初期位置
 
@@ -24,13 +24,9 @@ function Mesh25d(initpos, tri, thickness){
 
 	this.makeSurface();
 
-	this.thickness = thickness;
 	this.pos;
 	this.normal;
 	this.make3d();
-
-	this.stl;
-	this.makeStl();
 
 }
 
@@ -99,7 +95,7 @@ Mesh25d.prototype.make3d = function () {
 		this.pos[i] = new Array(3);
 		this.pos[i][0] = this.pos2d[i][0];
 		this.pos[i][1] = 500-this.pos2d[i][1];
-		this.pos[i][2] = this.thickness;
+		this.pos[i][2] = 1;
 	}
 	for(var i=0; i<this.posNum2d; i++){
 		this.pos[this.posNum2d+i] = new Array(3);
@@ -143,16 +139,17 @@ Mesh25d.prototype.make3d = function () {
 }
 
 
-Mesh25d.prototype.makeStl = function () {
-	this.stl = "solid mesh2.5d\n";
+Mesh25d.prototype.makeStl = function (scale, thickness) {
+	var stl = "solid mesh2.5d\n";
 	for(var i = 0; i < this.tri.length; i++) {
-		this.stl += "facet normal" + " " + this.normal[i][0] + " " + this.normal[i][1]  + " " + this.normal[i][2] + "\n";
-		this.stl += "outer loop\n";
-		this.stl += "vertex " + this.pos[this.tri[i][0]][0] + " " + this.pos[this.tri[i][0]][1] + " " + this.pos[this.tri[i][0]][2] + "\n";
-		this.stl += "vertex " + this.pos[this.tri[i][1]][0] + " " + this.pos[this.tri[i][1]][1] + " " + this.pos[this.tri[i][1]][2] + "\n";
-		this.stl += "vertex " + this.pos[this.tri[i][2]][0] + " " + this.pos[this.tri[i][2]][1] + " " + this.pos[this.tri[i][2]][2] + "\n";
-		this.stl += "endloop\n";
-		this.stl += "endfacet\n";
+		stl += "facet normal" + " " + this.normal[i][0] + " " + this.normal[i][1]  + " " + this.normal[i][2] + "\n";
+		stl += "outer loop\n";
+		stl += "vertex " + scale*this.pos[this.tri[i][0]][0] + " " + scale*this.pos[this.tri[i][0]][1] + " " + thickness*this.pos[this.tri[i][0]][2] + "\n";
+		stl += "vertex " + scale*this.pos[this.tri[i][1]][0] + " " + scale*this.pos[this.tri[i][1]][1] + " " + thickness*this.pos[this.tri[i][1]][2] + "\n";
+		stl += "vertex " + scale*this.pos[this.tri[i][2]][0] + " " + scale*this.pos[this.tri[i][2]][1] + " " + thickness*this.pos[this.tri[i][2]][2] + "\n";
+		stl += "endloop\n";
+		stl += "endfacet\n";
 	}
-	this.stl += "endsolid mesh2.5d\n";
+	stl += "endsolid mesh2.5d\n";
+	return stl;
 }

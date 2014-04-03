@@ -22,11 +22,15 @@
 		<div>
 			<input id="resetButton" value="リセット" type="button" />
 			<input id="drawOutLineButton" value="輪郭追加" type="button" />
-			<input id="editOutLineButton" value="輪郭編集" type="button" />
-			<input id="meshButton" value="メッシュ生成" type="button" /><br />
+			<input id="editOutLineButton" value="輪郭修正" type="button" />
+			<input id="meshButton" value="メッシュ生成" type="button" />
+		</div>
+		<div id="saveDiv">
+			<label id="thicknessLabel">厚み<input id="thicknessBox" type="text" value="5" name="thickness">[mm]</label>
 			<input id="saveButton" value="保存" type="button" />
 		</div>
 		<div>
+			<label><input id="gridCheckBox" type="checkbox" checked>10mmグリッド表示</label>
 			<label><input id="imgCheckBox" type="checkbox">画像表示</label>
 			<input id="uploadFile" name="image" type="file" />
 		</div>
