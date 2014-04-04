@@ -311,7 +311,6 @@ $(document).ready(function () {
 		context.globalAlpha = 1.0;
 
 		// 輪郭全体の描画
-		context.lineWidth = outlineWidth;
 		var color = 'rgb(20,20,20)';
 		context.fillStyle=color;
 		context.strokeStyle=color;
@@ -321,7 +320,6 @@ $(document).ready(function () {
 				drawLine(context, cvtmp.lines[i].start, cvtmp.lines[i].end);
 			}
 		}		
-		context.lineWidth = 1.0;
 	}
 
 	//////////////////////////////////////////////////////////
