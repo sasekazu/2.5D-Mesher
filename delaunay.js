@@ -163,21 +163,6 @@ DelaunayGen.prototype.addPoint = function(){
 		var dist = numeric.norm2(distVec);
 		
 		if(dist < c.rad	){
-			// 境界の辺が削除されないようにする
-			// (テスト中)
-			/*
-			var boundaryCnt = 0;
-			for(var j=0; j<3; ++j) {
-				if(this.boundary[this.tri[i][j]]==1) {
-					++boundaryCnt;
-				}
-			}
-			if(boundaryCnt!=2) {
-				// 外接円が入力点を内包する
-				// 三角形を記録する
-				focusedTri.push(i);
-			}
-			*/
 			// 外接円が入力点を内包する
 			// 三角形を記録する
 			focusedTri.push(i);

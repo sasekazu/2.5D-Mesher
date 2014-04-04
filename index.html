@@ -3,9 +3,12 @@
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<meta charset="utf-8">
 		<title>2.5D Mesher</title>
+		<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css" />
 		<link rel="stylesheet" type="text/css" href="index.css">
 	
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="parameters.js"></script>
 		<script type="text/javascript" src="numeric-1.2.6.min.js"></script>
 		<script type="text/javascript" src="outline.js"></script>    
 		<script type="text/javascript" src="delaunay.js"></script>    
@@ -33,6 +36,18 @@
 			<label><input id="gridCheckBox" type="checkbox" checked>10mmグリッド表示</label>
 			<label><input id="imgCheckBox" type="checkbox">画像表示</label>
 			<input id="uploadFile" name="image" type="file" />
+		</div>
+		<div><input id="detailButton" name="detailButton" type="button" value="詳細設定表示"/></div>
+		<div id="detail">
+			<p><b>輪郭細かさ</b>: <span id="minlenSpan"></span> [px]</p>
+			<div id="minlenSlider"></div>
+			<p>※細かすぎると修正が大変になるので注意</p>
+			<p><b>画像拡大倍率</b>: <span id="imgScSpan"></span></p>
+			<div id="imgScSlider"></div>
+			<p>※読み込み時は高さがちょうど窓に収まる大きさに調整される</p>
+			<p><b>出力スケール</b>: <span id="scaleSpan"></span> [mm/px]</p>
+			<div id="scaleSlider"></div>
+			<p>※保存時に参照されるパラメータ．グリッド1マスが10mmになるような3Dデータが作成される．</p>
 		</div>
 </body>
 </html>

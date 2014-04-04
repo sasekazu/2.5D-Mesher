@@ -84,6 +84,9 @@ function ClosedCurve(resol) {
 
 // 点の追加
 ClosedCurve.prototype.addPoint = function (pos) {
+	// グローバル変数minlenでメンバ変数minlenを書き換える
+	// (2.5D Mesherでスライダでminlenを調整にするための策)
+	this.minlen = minlen;
 	// 最初の点の追加
 	if (this.endpos.length == 0) {
 		this.endpos[0] = pos[0];
@@ -107,6 +110,7 @@ ClosedCurve.prototype.addPoint = function (pos) {
 		// 交差判定を行う
 		// 追加した線分の隣以外の線分と比較する
 		var doneFlag = false;
+		/*
 		if (this.lines.length > 1) {
 			for (var i = 0; i < this.lines.length - 2; i++) {
 				if (this.lines[this.lines.length - 1].intersect(this.lines[i])) {
@@ -123,6 +127,7 @@ ClosedCurve.prototype.addPoint = function (pos) {
 				}
 			}
 		}
+		*/
 
 		// 最初の1点の近傍の場合交差とみなす
 		if (this.lines.length > 2 && !doneFlag) {

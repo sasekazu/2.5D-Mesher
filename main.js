@@ -3,7 +3,6 @@
 /// <reference path="numeric-1.2.6.min.js" />
 /// <reference path="outline.js" />
 /// <reference path="delaunay.js" />
-/// <reference path="EditableMesh.js" />
 /// <reference path="drawFunc.js" />
 
 
@@ -19,6 +18,10 @@ $(document).ready(function () {
 	} else {
 		alert("Google Chrome と Firefox 以外のブラウザは非推奨です．IEは非対応ですm(_ _)m．");
 	}
+
+	
+	// 詳細設定を消しておく
+	$('#detail').hide();
 
 	// 2dコンテキストを取得
 	var canvas = $("#mViewCanvas");
@@ -50,7 +53,6 @@ $(document).ready(function () {
 
 	// アウトライン作成用変数
 	var outline = new Outline();
-	var minlen=15;
 	var cv;
 	var drawingFlag = true;    // 書き終わった後にクリックしなおしてから次の描画を始めるためのフラグ
 
@@ -60,19 +62,12 @@ $(document).ready(function () {
 	// 2.5次元メッシュ用変数
 	var mesh25d;
 
-	// スケーリング変数
-	var mmperpixel = 0.1;
 
 	/////////////////////////////////
 	// 画像の読み込み
 	//////////////////////////////////
 
 	var img = new Image();
-	var imgSc;
-	var dx;
-	var dy;
-	var dw;
-	var dh;
 
 	$("#uploadFile").change(function () {
 		// 選択されたファイルを取得
@@ -82,28 +77,6 @@ $(document).ready(function () {
 		var reader=new FileReader();
 		// File APIを使用し、ローカルファイルを読み込む
 		reader.onload=function (evt) {
-			// 画像がloadされた後に、canvasに描画する
-			img.onload=function () {
-				imgSc=0.5;
-				if(img.height<img.width) {
-					dx=0.5*(1-imgSc)*canvasWidth;
-					dy=0.5*(canvasHeight-imgSc*img.height/img.width*canvasWidth);
-					dw=imgSc*canvasWidth;
-					dh=imgSc*canvasWidth*img.height/img.width;
-				} else {
-					dx=0.5*(canvasWidth-imgSc*img.width/img.height*canvasHeight);
-					dy=0.5*(1-imgSc)*canvasHeight;
-					dw=imgSc*canvasHeight*img.width/img.height;
-					dh=imgSc*canvasHeight;
-				}
-				// 画像以外の変数の初期化
-				state="drawOutLine";
-				console.log("area "+(dw*dh));
-				cv=new ClosedCurve(minlen);
-				outline=new Outline();
-				$("#imgCheckBox").attr("checked", true ) // 画像表示チェックを入れる
-				mainloop();
-			}
 			// 画像のURLをソースに設定
 			img.src=evt.target.result;
 		}
@@ -117,22 +90,21 @@ $(document).ready(function () {
 
 	// 画像が読み込まれたときに実行
 	img.onload=function () {
-		imgSc=0.5;
-		if(img.height<img.width) {
-			dx=0.5*(1-imgSc)*canvasWidth;
-			dy=0.5*(canvasHeight-imgSc*img.height/img.width*canvasWidth);
-			dw=imgSc*canvasWidth;
-			dh=imgSc*canvasWidth*img.height/img.width;
-		} else {
-			dx=0.5*(canvasWidth-imgSc*img.width/img.height*canvasHeight);
-			dy=0.5*(1-imgSc)*canvasHeight;
-			dw=imgSc*canvasHeight*img.width/img.height;
-			dh=imgSc*canvasHeight;
-		}
+		calcImgParameters();
+		// 画像以外の変数の初期化
+		state="drawOutLine";
 		cv=new ClosedCurve(minlen);
 		outline=new Outline();
+		$("#imgCheckBox").attr("checked", true ) // 画像表示チェックを入れる
 		mainloop();
 	}
+	calcImgParameters = function(){
+		dx=0.5*(canvasWidth-imgSc*img.width/img.height*canvasHeight);
+		dy=0.5*(1-imgSc)*canvasHeight;
+		dw=imgSc*canvasHeight*img.width/img.height;
+		dh=imgSc*canvasHeight;
+	}
+
 	// 画像が読み込めない時も実行
 	img.onerror=function(){
 		alert("画像が読み込めません");
@@ -142,6 +114,21 @@ $(document).ready(function () {
 		outline = new Outline();
 		mainloop();
 	}
+
+	
+	// 画像スケールのスライダイベント
+	$("#imgScSlider").slider({
+		min: 0,
+		max: 1,
+		step: 0.01,
+		value: imgSc,
+		slide: function (event, ui) {
+			imgSc = ui.value;
+			document.getElementById('imgScSpan').innerHTML = imgSc;
+			calcImgParameters();
+		}
+	});
+	document.getElementById('imgScSpan').innerHTML=imgSc;
 
 
 	/////////////////////////////////////////////////////////
@@ -240,8 +227,11 @@ $(document).ready(function () {
 
 		// 全体の写真を描画
 		var imgFlag = $('#imgCheckBox').is(':checked');
-		if(imgFlag)
+		if(imgFlag) {
+			context.globalAlpha = 0.7;
 			context.drawImage(img, dx, dy, dw, dh);
+			context.globalAlpha = 1.0;
+		}
 
 		// グリッドの表示
 		var gridFlag = $('#gridCheckBox').is(':checked');
@@ -257,26 +247,26 @@ $(document).ready(function () {
 		// 作成中の曲線の描画
 		for (var i = 0; i < cv.lines.length; ++i) {
 			drawLine(context, cv.lines[i].start, cv.lines[i].end);
-			drawCircle(context, cv.lines[i].start, 2);
-			drawCircle(context, cv.lines[i].end, 2);
+			drawCircleS(context, cv.lines[i].start, 1);
+			drawCircleS(context, cv.lines[i].end, 1);
 		}
 		var color = 'rgb(255,0,0)';
 		context.fillStyle = color;
-		drawCircle(context, cv.endpos, 3);
+		drawCircle(context, cv.endpos, 2);
 
 		// 輪郭全体の描画
-		context.lineWidth = 4.0;
 		var color = 'rgb(0,0,0)';
 		context.fillStyle = color;
 		for (var c = 0; c < outline.closedCurves.length; c++) {
 			var cvtmp = outline.closedCurves[c];
 			for (var i = 0; i < cvtmp.lines.length; ++i) {
 				drawLine(context, cvtmp.lines[i].start, cvtmp.lines[i].end);
-				drawCircle(context, cvtmp.lines[i].start, 1);
-				drawCircle(context, cvtmp.lines[i].end, 1);
+				if(state == "editOutLine") {
+					drawCircle(context, cvtmp.lines[i].start, 1);
+					drawCircle(context, cvtmp.lines[i].end, 1);
+				}
 			}
 		}		
-		context.lineWidth = 1.0;
 	}
 	
 	//////////////////////////////////////////////////////////
@@ -321,7 +311,7 @@ $(document).ready(function () {
 		context.globalAlpha = 1.0;
 
 		// 輪郭全体の描画
-		context.lineWidth = 4.0;
+		context.lineWidth = outlineWidth;
 		var color = 'rgb(20,20,20)';
 		context.fillStyle=color;
 		context.strokeStyle=color;
@@ -441,6 +431,20 @@ $(document).ready(function () {
 			rem.parentNode.removeChild(rem);
 		}
 	}
+
+	// 詳細設定表示/非表示ボタン
+	$("#detailButton").click(function(){
+		var detailButton = document.getElementById("detailButton");
+		var detailObj = document.getElementById("detail");
+		detailState = detailObj.style.display;
+		if(detailState === 'none') {
+			detailButton.value = "詳細設定非表示" ;
+			$('#detail').show('slow');
+		} else {
+			detailButton.value = "詳細設定表示" ;
+			$('#detail').hide('slow');
+		}
+	});
 
 	
 	//////////////////////////////////////////////////////////
