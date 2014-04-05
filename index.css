@@ -1,29 +1,135 @@
+@import url(http://fonts.googleapis.com/css?family=Lemon);
+
 *{
-	margin: 3px;
-	padding: 3px;
 }
 
-canvas {
-  border: solid black 1px;
+body{
+	font-family: "ヒラギノ角ゴ ProN", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif;
+}
+
+a{
+	font-size: 10px;
+	margin: 2px;
+	margin-left: 10px;
+}
+
+input[type=file] { 
+	/*
+	font-size: 1.2em;
+	padding: 5px 5px;
+	background-color: #404040;
+	color: #fff;
+	border-style: none;
+	width: 200px;
+		*/
+}
+
+
+#page{
+	width: 1070px;
+	margin: 0 auto;
+}
+
+#topBox{
+	margin: 5px;
+}
+
+#centerBox{
+	float: left;
+	margin: 0px;
+	padding: 0px;
+}
+
+#rightBox{
+	float: left;
+	width: 260px;
+}
+
+/* topBoxの中身 */
+#appTitle{
+	font-family: 'Lemon', cursive;
+	font-size: 40px;
+	color: #404040;
+	margin: 0;
+}
+
+
+/* centerBoxの中身 */
+#mViewCanvas {
+	border: ridge #404040;
+	background-color: white;
+	margin: 0px;
+	/* 
+		canvasの幅はhtmlファイルで指定する 
+		CSSに記述すると拡大描画されてしまう
+		原因未特定
+	*/
+}
+
+.messageSpan{
+	margin:  0px;
+	border: dotted #404040 1px;
+	width: 400px;
+	padding: 2px 10px;
 }
 
 #messageBox{
-    width: 200px;  
-    height: 30px;
-    position: absolute;  
-    top: 485px; 
-    left: 15px;  
+	margin: 0px;
 }
+
+
+/* rightBoxの中身 */
+
+#rightBox * {
+	margin: 2px;
+}
+
+.funcButton{
+	font-size: 1.2em;
+	padding: 5px 5px;
+	background-color: #404040;
+	color: #fff;
+	border-style: none;
+	width: 200px;
+}
+
+
+.funcButton:hover {
+	background-color: #808080;
+	color: #fff;
+}
+
 
 #saveDiv{
-    display:none;
+	display:none;
+	padding: 0px;
+	margin: 0px;
 }
 
+#downloadDiv{
+	display:none;
+}
 #thicknessBox{
-    width: 20px;
+	text-align: right;
+	width: 30px;
 }
-
 
 #detail {
-    width: 400px;
+	padding: 2px;
+}
+
+.settingCaption{
+	font-size: 12px;
+	margin: 0px;
+}
+
+.settingMemo{
+	font-size: 8px;
+	margin: 0px;
+}
+
+.settingItem{
+	margin: 2px;
+	padding: 5px;
+	border: solid gray 1px;
 }

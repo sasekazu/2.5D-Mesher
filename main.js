@@ -85,7 +85,7 @@ $(document).ready(function () {
 	});
 
 	// 最初の画像を選択
-	img.src = "miku.png?" + new Date().getTime();
+	img.src = "brank.png?" + new Date().getTime();
 	
 
 	// 画像が読み込まれたときに実行
@@ -157,7 +157,12 @@ $(document).ready(function () {
 				meshCompleteFunc();
 				break;
 		}
-		$("#message").text(message);
+		$("#modeMessage").text(message);
+		var winWidth = canvasWidth*mmperpixel;
+		var winHeight = canvasHeight*mmperpixel;
+		winWidth = winWidth.toFixed(0);
+		winHeight = winHeight.toFixed(0);
+		$("#sizeMessage").text("窓サイズ 幅"+ winWidth + "mm × 高さ" + winHeight + "mm");
 
 
 		var time1 = new Date();
@@ -233,11 +238,12 @@ $(document).ready(function () {
 			context.globalAlpha = 1.0;
 		}
 
+
 		// グリッドの表示
 		var gridFlag = $('#gridCheckBox').is(':checked');
 		if(gridFlag) {
-			context.fillStyle = 'gray'; 
-			context.strokeStyle = 'gray';
+			context.fillStyle = 'lightgray'; 
+			context.strokeStyle = 'lightgray';
 			drawGrid(context, 0, 0, canvasWidth, canvasHeight, 10/mmperpixel, 10/mmperpixel);
 		}
 
@@ -292,8 +298,8 @@ $(document).ready(function () {
 		// グリッドの表示
 		var gridFlag = $('#gridCheckBox').is(':checked');
 		if(gridFlag) {
-			context.fillStyle = 'gray'; 
-			context.strokeStyle = 'gray';
+			context.fillStyle = 'lightgray'; 
+			context.strokeStyle = 'lightgray';
 			drawGrid(context, 0, 0, canvasWidth, canvasHeight, 10/mmperpixel, 10/mmperpixel);
 		}
 
@@ -332,7 +338,7 @@ $(document).ready(function () {
 		// 描画リセット
 		context.setTransform(1, 0, 0, 1, 0, 0);
 		context.clearRect(0, 0, canvasWidth, canvasHeight);
-		
+
 		// 全体の写真を描画
 		if(imgFlag) {
 			context.drawImage(img, dx, dy, dw, dh);
@@ -341,8 +347,8 @@ $(document).ready(function () {
 		// グリッドの表示
 		var gridFlag = $('#gridCheckBox').is(':checked');
 		if(gridFlag) {
-			context.fillStyle = 'gray'; 
-			context.strokeStyle = 'gray';
+			context.fillStyle = 'lightgray'; 
+			context.strokeStyle = 'lightgray';
 			drawGrid(context, 0, 0, canvasWidth, canvasHeight, 10/mmperpixel, 10/mmperpixel);
 		}
 
@@ -384,6 +390,10 @@ $(document).ready(function () {
 
 	// 輪郭編集ボタン
 	$("#editOutLineButton").click(function () {
+		if(outline.closedCurves.length === 0) {
+			alert("修正する輪郭がありません");
+			return;
+		}
 		state = "editOutLine";
 		hideAndRemoveSaveEle();
 	});
@@ -413,21 +423,15 @@ $(document).ready(function () {
 	    var thickness = Number(v);
 		var text = mesh25d.makeStl(mmperpixel, thickness);
 		var blob = new Blob([text],{"type" : "text/html"});
-		var a = document.createElement('a');
-		var label = document.createTextNode('ダウンロード（右クリックから保存し，ファイル名を拡張子stlに変更してください）');
+		var a = document.getElementById('downloadLink');
 		a.setAttribute('href', window.URL.createObjectURL(blob));
 		a.setAttribute('target', '_blank');
-		a.id = "downloadLink";
-		a.appendChild(label);
-		this.parentNode.insertBefore(a, this.nextSibling);
+		$(downloadDiv).show('slow');
 	});
 
 	function hideAndRemoveSaveEle() {
-		$('#saveDiv').hide();
-		var rem = document.getElementById("downloadLink");
-		if(rem) {
-			rem.parentNode.removeChild(rem);
-		}
+		$('#saveDiv').hide('slow');
+		$('#downloadDiv').hide('slow');
 	}
 
 	// 詳細設定表示/非表示ボタン

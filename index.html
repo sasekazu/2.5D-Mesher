@@ -2,9 +2,10 @@
 <html><head>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<meta charset="utf-8">
-		<title>2.5D Mesher</title>
+		<title>2.5d Mesher</title>
+		<link rel="stylesheet" type="text/css" href="normalize.css" />
 		<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css" />
-		<link rel="stylesheet" type="text/css" href="index.css">
+		<link rel="stylesheet" type="text/css" href="index.css" />
 	
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
@@ -17,37 +18,54 @@
 		<script type="text/javascript" src="main.js"></script>    
 	</head>
 	<body>
-		<canvas id="mViewCanvas" width="800" height="500">
-		</canvas>
-		<div id="messageBox">
-			<p id="message"></p>
-		</div>
-		<div>
-			<input id="resetButton" value="リセット" type="button" />
-			<input id="drawOutLineButton" value="輪郭追加" type="button" />
-			<input id="editOutLineButton" value="輪郭修正" type="button" />
-			<input id="meshButton" value="メッシュ生成" type="button" />
-		</div>
+		<div id="page">
+		<header></header>
+		<div id="topBox">
+			<h1 id="appTitle">2.5d Mesher</h1>
+		</div><!-- 終了 #topBox --->
+
+		<div id="centerBox">
+		<canvas id="mViewCanvas" width="800" height="600"></canvas>
+		<p id="messageBox"><span class="messageSpan" id="modeMessage"></span><span class="messageSpan" id="sizeMessage"></span></p>
+		</div><!-- 終了 #centerBox -->
+
+		<div id="rightBox">
+		<input class="funcButton" id="resetButton" value="リセット" type="button" /><br />
+		<input class="funcButton" id="drawOutLineButton" value="輪郭追加" type="button" /><br />
+		<input class="funcButton" id="editOutLineButton" value="輪郭修正" type="button" /><br />
+		<input class="funcButton" id="meshButton" value="メッシュ生成" type="button" /><br />
 		<div id="saveDiv">
-			<label id="thicknessLabel">厚み<input id="thicknessBox" type="text" value="5" name="thickness">[mm]</label>
-			<input id="saveButton" value="保存" type="button" />
+		<span>厚み</span><input id="thicknessBox" type="text" value="5" name="thickness"><span>[mm]</span>
+		<input class="funcButton" id="saveButton" value="保存" type="button" />
+		<div id="downloadDiv">
+			<a id="downloadLink">ダウンロード（右クリックから保存してください）</a>
 		</div>
+		</div><!-- 終了 #saveDiv -->
 		<div>
-			<label><input id="gridCheckBox" type="checkbox" checked>10mmグリッド表示</label>
+			<label><input id="gridCheckBox" type="checkbox">10mmグリッド表示</label><br />
 			<label><input id="imgCheckBox" type="checkbox">画像表示</label>
 			<input id="uploadFile" name="image" type="file" />
 		</div>
-		<div><input id="detailButton" name="detailButton" type="button" value="詳細設定表示"/></div>
+		<div><input class="funcButton" id="detailButton" name="detailButton" type="button" value="詳細設定表示"/></div>
 		<div id="detail">
-			<p><b>輪郭細かさ</b>: <span id="minlenSpan"></span> [px]</p>
+			<div class="settingItem">
+			<p class="settingCaption">輪郭細かさ: <span id="minlenSpan"></span> [px]</p>
 			<div id="minlenSlider"></div>
-			<p>※細かすぎると修正が大変になるので注意</p>
-			<p><b>画像拡大倍率</b>: <span id="imgScSpan"></span></p>
+			<p class="settingMemo">※細かすぎると修正が大変になるので注意</p>
+			</div>
+			<div class="settingItem">
+			<p class="settingCaption">画像拡大倍率: <span id="imgScSpan"></span></p>
 			<div id="imgScSlider"></div>
-			<p>※読み込み時は高さがちょうど窓に収まる大きさに調整される</p>
-			<p><b>出力スケール</b>: <span id="scaleSpan"></span> [mm/px]</p>
+			<p class="settingMemo">※読み込み時は高さがちょうど窓に収まる大きさに調整される</p>
+			</div>
+			<div class="settingItem">
+			<p class="settingCaption">出力スケール: <span id="scaleSpan"></span> [mm/px]</p>
 			<div id="scaleSlider"></div>
-			<p>※保存時に参照されるパラメータ．グリッド1マスが10mmになるような3Dデータが作成される．</p>
-		</div>
-</body>
+			<p class="settingMemo">※保存時に参照されるパラメータ．グリッド1マスが10mmになるような3Dデータが作成される．</p>
+			</div>
+		</div><!-- 終了 #detail -->
+		</div><!-- 終了 #rightBox -->
+
+		</div><!-- 終了 #page -->
+	</body>
 </html>
