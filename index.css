@@ -15,12 +15,23 @@ a{
 
 
 #page{
-	width: 1070px;
+	width: 1035px;
 	margin: 0 auto;
 }
 
 #topBox{
 	margin: 5px;
+}
+
+#pageBody{
+	background-color: lightgray;
+	padding: 10px;
+}
+
+#pageBody:after{
+	content: "";
+	clear: both;
+	display:block;
 }
 
 #centerBox{
@@ -30,8 +41,8 @@ a{
 }
 
 #rightBox{
-	float: left;
-	width: 260px;
+	float: right;
+	width: 205px;
 }
 
 /* topBoxの中身 */
@@ -64,8 +75,8 @@ a{
 }
 
 .messageSpan{
-	margin:  0px;
-	border: dotted #404040 1px;
+	margin-right:  10px;
+	border: solid #404040 1px;
 	width: 400px;
 	padding: 2px 10px;
 }
@@ -152,6 +163,10 @@ a{
 
 /* 更新情報 */
 #updateBox{
-	clear: both;
-	margin-top: 100px;
+	margin-top: 20px;
+	border-top: solid gray 1px;
+}
+
+#updateBox h2{
+	font-size: 20px;
 }
