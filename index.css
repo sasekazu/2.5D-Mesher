@@ -15,7 +15,7 @@ a{
 
 
 #page{
-	width: 1035px;
+	width: 1013px;
 	margin: 0 auto;
 }
 
@@ -24,8 +24,8 @@ a{
 }
 
 #pageBody{
-	background-color: lightgray;
-	padding: 10px;
+	/*background-color: lightgray;*/
+	/*padding: 10px;*/
 }
 
 #pageBody:after{
@@ -130,6 +130,11 @@ a{
 
 #downloadDiv{
 	display:none;
+	padding: 0px;
+}
+
+#downloadLink{
+	margin: 0px;
 }
 
 #thicknessBox{
