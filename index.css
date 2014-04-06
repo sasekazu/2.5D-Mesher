@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Lemon);
+@import url(http://fonts.googleapis.com/css?family=Audiowide);
 
 *{
 }
@@ -51,7 +51,7 @@ a{
 }
 
 #appTitle{
-	font-family: 'Lemon', cursive;
+	font-family: 'Audiowide', cursive;
 	font-size: 40px;
 	color: #404040;
 	margin: 0;
