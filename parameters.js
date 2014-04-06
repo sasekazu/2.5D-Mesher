@@ -12,7 +12,8 @@ var dy;
 var dw;
 var dh;
 
-
+// 輪郭太さ
+var outlineWidth = 2.0;
 
 $(document).ready(function () {
 
@@ -33,13 +34,26 @@ $(document).ready(function () {
 	$("#minlenSlider").slider({
 		min: 5,
 		max: 30,
-		step: 5,
+		step: 1,
 		value: minlen,
 		slide: function (event, ui) {
 			minlen = ui.value;
 			document.getElementById('minlenSpan').innerHTML = minlen;
 		}
 	});
-	document.getElementById('minlenSpan').innerHTML=minlen;
+	document.getElementById('minlenSpan').innerHTML = minlen;
+
+	// 輪郭太さoutlineWidth
+	$("#outlineWidthSlider").slider({
+		min: 1,
+		max: 5,
+		step: 1,
+		value: outlineWidth,
+		slide: function (event, ui) {
+			outlineWidth = ui.value;
+			document.getElementById('outlineWidthSpan').innerHTML = outlineWidth;
+		}
+	});
+	document.getElementById('outlineWidthSpan').innerHTML = outlineWidth;
 
 });

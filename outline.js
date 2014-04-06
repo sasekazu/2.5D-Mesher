@@ -133,7 +133,8 @@ ClosedCurve.prototype.addPoint = function (pos) {
 		if (this.lines.length > 2 && !doneFlag) {
 			var srel = numeric.sub(pos, this.lines[0].start);
 			var slen = numeric.norm2(srel);
-			if (slen < this.minlen) {
+			var thresiold = this.minlen*2;
+			if (slen < thresiold) {
 				this.closedFlag = true;
 				this.endpos = numeric.mul(this.lines[0].start,1);
 				this.lines[this.lines.length-1].setEnd(this.endpos);

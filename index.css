@@ -13,17 +13,6 @@ a{
 	margin-left: 10px;
 }
 
-input[type=file] { 
-	/*
-	font-size: 1.2em;
-	padding: 5px 5px;
-	background-color: #404040;
-	color: #fff;
-	border-style: none;
-	width: 200px;
-		*/
-}
-
 
 #page{
 	width: 1070px;
@@ -46,11 +35,19 @@ input[type=file] {
 }
 
 /* topBoxの中身 */
+#appP{
+	margin: 0;
+}
+
 #appTitle{
 	font-family: 'Lemon', cursive;
 	font-size: 40px;
 	color: #404040;
 	margin: 0;
+}
+
+#version{
+	margin-left: 10px;
 }
 
 
@@ -80,11 +77,25 @@ input[type=file] {
 
 /* rightBoxの中身 */
 
-#rightBox * {
+.settingItemUpper{
+	width: 199px;
+	margin: 2px;
+	padding: 0px;
+	border: solid gray 1px;
+}
+
+#imgCheckBox{
+	margin: 2px;
+}
+
+#uploadFile{
+	font-size: 9px;
+	width: 190px;
 	margin: 2px;
 }
 
 .funcButton{
+	margin: 2px;
 	font-size: 1.2em;
 	padding: 5px 5px;
 	background-color: #404040;
@@ -109,9 +120,14 @@ input[type=file] {
 #downloadDiv{
 	display:none;
 }
+
 #thicknessBox{
 	text-align: right;
 	width: 30px;
+}
+
+#gridCheckBox{
+	margin: 2px;
 }
 
 #detail {
@@ -132,4 +148,10 @@ input[type=file] {
 	margin: 2px;
 	padding: 5px;
 	border: solid gray 1px;
+}
+
+/* 更新情報 */
+#updateBox{
+	clear: both;
+	margin-top: 100px;
 }

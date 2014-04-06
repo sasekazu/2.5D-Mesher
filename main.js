@@ -183,6 +183,8 @@ $(document).ready(function () {
 					cv.addPoint(mousePos[0]);
 					// 閉曲線が完成したときの処理
 					if (cv.closedFlag) {
+						// 曲線同士の交差判定を行う場合
+						/*
 						// 曲線同士の交差判定を行う
 						var intFlag = false;
 						for (var i = 0; i < outline.closedCurves.length; i++) {
@@ -192,8 +194,12 @@ $(document).ready(function () {
 							}
 						}
 						// 交差がなければ輪郭に追加する
-						if(!intFlag)
+						if(!intFlag){
 							outline.addClosedLine(cv);
+						}
+						*/
+						// 曲線同士の交差判定を行わない場合
+						outline.addClosedLine(cv);
 						drawingFlag = false;
 						// 作業用の閉曲線インスタンスを初期化
 						cv = new ClosedCurve(minlen);
@@ -238,7 +244,6 @@ $(document).ready(function () {
 			context.globalAlpha = 1.0;
 		}
 
-
 		// グリッドの表示
 		var gridFlag = $('#gridCheckBox').is(':checked');
 		if(gridFlag) {
@@ -249,6 +254,7 @@ $(document).ready(function () {
 
 		context.fillStyle = 'rgb(0, 0, 0)'; // 黒
 		context.strokeStyle = 'rgb(0, 0, 0)'; // 黒
+		context.lineWidth = outlineWidth;
 
 		// 作成中の曲線の描画
 		for (var i = 0; i < cv.lines.length; ++i) {
@@ -268,11 +274,12 @@ $(document).ready(function () {
 			for (var i = 0; i < cvtmp.lines.length; ++i) {
 				drawLine(context, cvtmp.lines[i].start, cvtmp.lines[i].end);
 				if(state == "editOutLine") {
-					drawCircle(context, cvtmp.lines[i].start, 1);
-					drawCircle(context, cvtmp.lines[i].end, 1);
+					drawCircle(context, cvtmp.lines[i].start, outlineWidth);
+					drawCircle(context, cvtmp.lines[i].end, outlineWidth);
 				}
 			}
 		}		
+		context.lineWidth = 1.0;
 	}
 	
 	//////////////////////////////////////////////////////////
@@ -385,6 +392,7 @@ $(document).ready(function () {
 	// 輪郭追加ボタン
 	$("#drawOutLineButton").click(function () {
 		state = "drawOutLine";
+		cv = new ClosedCurve(minlen); // 作成中の輪郭は削除する
 		hideAndRemoveSaveEle();
 	});
 
