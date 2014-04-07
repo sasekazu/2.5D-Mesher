@@ -427,6 +427,7 @@ $(document).ready(function () {
 
 	// 保存ボタン
 	$("#saveButton").click(function(){
+		$('#downloadDiv').hide();
 	    var v = $("#thicknessBox").val();
 	    var thickness = Number(v);
 		var text = mesh25d.makeStl(mmperpixel, thickness);
@@ -434,7 +435,8 @@ $(document).ready(function () {
 		var a = document.getElementById('downloadLink');
 		a.setAttribute('href', window.URL.createObjectURL(blob));
 		a.setAttribute('target', '_blank');
-		$(downloadDiv).show('slow');
+		document.getElementById('thicknessDownload').innerHTML=thickness;
+		$('#downloadDiv').show('slow');
 	});
 
 	function hideAndRemoveSaveEle() {

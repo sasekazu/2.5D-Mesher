@@ -43,14 +43,14 @@
 			<div id="saveDiv">
 				<input class="funcButton" id="saveButton" value="保存" type="button" />
 				<div id="downloadDiv">
-					<a id="downloadLink">ダウンロード（右クリックから保存し，拡張子をstlに変えてください．）</a>
+					<a id="downloadLink">厚み <span id="thicknessDownload"></span> [mm] の3Dデータをダウンロード（右クリックから保存し，拡張子をstlに変えてください．）</a>
 				</div>
 			</div><!-- 終了 #saveDiv -->
 			<div><input class="funcButton" id="detailButton" name="detailButton" type="button" value="詳細設定表示" /></div>
 			<div id="detail">
 				<div class="settingItem">
 					<p class="settingCaption">厚み</p>
-					<p class="settingMemo"><input id="thicknessBox" type="text" value="5" name="thickness"><span>[mm]</span></p>
+					<p class="settingMemo"><input id="thicknessBox" type="text" value="5" name="thickness"><span>[mm]</span> 「保存」ボタンを押したときに反映される．</p>
 				</div>
 				<div class="settingItem">
 					<p class="settingCaption"><label><input id="gridCheckBox" type="checkbox">10mmグリッド表示</label></p>
