@@ -153,3 +153,13 @@ Mesh25d.prototype.makeStl = function (scale, thickness) {
 	stl += "endsolid mesh2.5d\n";
 	return stl;
 }
+
+Mesh25d.prototype.getPos = function (scale, thickness) {
+	var vert = [];
+	for(var i = 0; i < this.pos.length; i++) {
+		vert.push([scale*this.pos[i][0], scale*this.pos[i][1], thickness*this.pos[i][2]]);
+	}
+	return vert;
+}
+
+

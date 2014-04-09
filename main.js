@@ -288,9 +288,15 @@ $(document).ready(function () {
 	function generateMeshFunc() {
 		var imgFlag = $('#imgCheckBox').is(':checked');
 		if(!mesh.addPoint()) {
+			// メッシュ生成が完了したら実行される処理
 			mesh.meshGen();
 			state = "meshComplete";
 			mesh25d = new Mesh25d(mesh.dPos, mesh.tri);
+			
+			var v = $("#thicknessBox").val();
+			var thickness = Number(v);
+			var vert = mesh25d.getPos(mmperpixel, thickness);
+			renderWebGL(canvasWidth, canvasHeight, vert, mesh25d.tri);
 			$('#saveDiv').show("slow");
 		}
 
@@ -375,6 +381,7 @@ $(document).ready(function () {
 			context.globalAlpha = 1.0;
 		}
 	}
+
 
 
 	//////////////////////////////////////////////////////////
