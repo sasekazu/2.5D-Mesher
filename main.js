@@ -156,6 +156,9 @@ $(document).ready(function () {
 				message = "メッシュ生成終了";
 				meshCompleteFunc();
 				break;
+			case "3dView":
+				message = "3D表示"
+				break;
 		}
 		$("#modeMessage").text(message);
 		var winWidth = canvasWidth*mmperpixel;
@@ -293,10 +296,6 @@ $(document).ready(function () {
 			state = "meshComplete";
 			mesh25d = new Mesh25d(mesh.dPos, mesh.tri);
 			
-			var v = $("#thicknessBox").val();
-			var thickness = Number(v);
-			var vert = mesh25d.getPos(mmperpixel, thickness);
-			renderWebGL(canvasWidth, canvasHeight, vert, mesh25d.tri);
 			$('#saveDiv').show("slow");
 		}
 
@@ -415,7 +414,6 @@ $(document).ready(function () {
 
 	// メッシュボタン
 	$("#meshButton").click(function () {
-
 		if(outline.closedCurves.length==0) {
 			cv=new ClosedCurve(minlen);
 			cv.addPoint([dx, dy]);
@@ -432,8 +430,19 @@ $(document).ready(function () {
 		state = "generateMesh";
 	});
 
+	// 3Dビュー
+	$('#3dButton').click(function(){
+		state = "3dView";
+		$('#mViewCanvas').hide();
+		var v = $("#thicknessBox").val();
+		var thickness = Number(v);
+		var vert = mesh25d.getPos(mmperpixel, thickness);
+		renderWebGL(canvasWidth, canvasHeight, mesh25d.modelLength, mesh25d.modelTop, mesh25d.modelBottom, vert, mesh25d.tri);
+	});
+
 	// 保存ボタン
 	$("#saveButton").click(function(){
+		// ダウンロードリンクの構成
 		$('#downloadDiv').hide();
 	    var v = $("#thicknessBox").val();
 	    var thickness = Number(v);
@@ -447,6 +456,13 @@ $(document).ready(function () {
 	});
 
 	function hideAndRemoveSaveEle() {
+		$('#mViewCanvas').show();
+		// webglオブジェクトが存在する場合削除
+		var oyadom = document.getElementById('webglBox');
+		var webglOldDom = document.getElementById('webgl');
+		if(webglOldDom) {
+			oyadom.removeChild(webglOldDom);
+		}
 		$('#saveDiv').hide('slow');
 		$('#downloadDiv').hide('slow');
 	}

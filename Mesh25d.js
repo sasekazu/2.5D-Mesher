@@ -25,7 +25,14 @@ function Mesh25d(initpos, tri){
 	this.makeSurface();
 
 	this.pos;
+	this.xmax;
+	this.xmin;
+	this.ymax;
+	this.ymin;
 	this.normal;
+	this.modelLength;
+	this.modelTop;
+	this.modelBottom;
 	this.make3d();
 
 }
@@ -89,19 +96,46 @@ Mesh25d.prototype.makeSurface = function(){
 
 
 Mesh25d.prototype.make3d = function () {
+	// pos2dの中心位置を求める
+	var xmax, ymax, xmin, ymin;
+	var center2d = [0,0];
+	xmax = this.pos2d[0][0];
+	xmin = this.pos2d[0][0];
+	ymax = this.pos2d[0][1];
+	ymin = this.pos2d[0][1];
+	for(var i=0; i<this.posNum2d; i++){
+		if(xmax < this.pos2d[i][0]) {
+			xmax = this.pos2d[i][0];
+		}
+		if(xmin > this.pos2d[i][0]) {
+			xmin = this.pos2d[i][0];
+		}
+		if(ymax < this.pos2d[i][1]) {
+			ymax = this.pos2d[i][1];
+		}
+		if(ymin > this.pos2d[i][1]) {
+			ymin = this.pos2d[i][1];
+		}
+	}
+	center2d[0] = (xmax+xmin)/2;
+	center2d[1] = (ymax+ymin)/2;
+	this.xmax = xmax;
+	this.xmin = xmin;
+	this.ymax = ymax;
+	this.ymin = ymin;
 	// pos3dの作成
-	this.pos = new Array(this.posNum2d*2);
+	this.pos = new Array(this.posNum2d * 2);
 	for(var i=0; i<this.posNum2d; i++){
 		this.pos[i] = new Array(3);
-		this.pos[i][0] = this.pos2d[i][0];
-		this.pos[i][1] = 500-this.pos2d[i][1];
-		this.pos[i][2] = 1;
+		this.pos[i][0] = this.pos2d[i][0]-center2d[0];
+		this.pos[i][1] = -this.pos2d[i][1]+center2d[1];
+		this.pos[i][2] = 0.5;
 	}
 	for(var i=0; i<this.posNum2d; i++){
 		this.pos[this.posNum2d+i] = new Array(3);
 		this.pos[this.posNum2d+i][0] = this.pos[i][0];
 		this.pos[this.posNum2d+i][1] = this.pos[i][1];
-		this.pos[this.posNum2d+i][2] = 0;
+		this.pos[this.posNum2d+i][2] = -0.5;
 	}
 	// triの作成
 	var triNum2d = this.tri.length;
@@ -159,6 +193,22 @@ Mesh25d.prototype.getPos = function (scale, thickness) {
 	for(var i = 0; i < this.pos.length; i++) {
 		vert.push([scale*this.pos[i][0], scale*this.pos[i][1], thickness*this.pos[i][2]]);
 	}
+
+	var modelLengthTmp;
+	if(this.xmax - this.xmin > this.ymax - this.ymin) {
+		modelLengthTmp = this.xmax - this.xmin;
+	} else {
+		modelLengthTmp = this.ymax - this.ymin;
+	}
+	if(scale*modelLengthTmp<thickness){
+		this.modelLength = thickness;
+	}else{
+		this.modelLength = scale * modelLengthTmp;
+	}
+
+	this.modelTop = 0.5*thickness;
+	this.modelBottom = -0.5 * thickness;
+
 	return vert;
 }
 

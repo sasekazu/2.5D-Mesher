@@ -34,7 +34,10 @@
 		</header>
 		<div id="pageBody">
 		<div id="centerBox">
-			<canvas id="mViewCanvas" width="800" height="600"></canvas>
+			<div id="viewerBox">
+				<canvas id="mViewCanvas" width="800" height="600"></canvas>
+			</div>
+			<div id="webglBox"></div>
 			<p id="messageBox"><span class="messageSpan" id="modeMessage"></span><span class="messageSpan" id="sizeMessage"></span></p>
 		</div><!-- 終了 #centerBox -->
 
@@ -48,6 +51,7 @@
 			<input class="funcButton" id="editOutLineButton" value="輪郭修正" type="button" /><br />
 			<input class="funcButton" id="meshButton" value="メッシュ生成" type="button" /><br />
 			<div id="saveDiv">
+				<input class="funcButton" id="3dButton" value="3D表示" type="button" />
 				<input class="funcButton" id="saveButton" value="保存" type="button" />
 				<div id="downloadDiv">
 					<a id="downloadLink">厚み <span id="thicknessDownload"></span> [mm] の3Dデータをダウンロード（右クリックから保存し，拡張子をstlに変えてください．）</a>

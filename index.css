@@ -15,7 +15,7 @@ a{
 
 
 #page{
-	width: 1013px;
+	width: 1012px;
 	margin: 0 auto;
 }
 
@@ -72,6 +72,13 @@ a{
 		CSSに記述すると拡大描画されてしまう
 		原因未特定
 	*/
+}
+
+/* 自動生成されるwebglの要素のスタイル */
+#webgl{
+	border: ridge #404040;
+	background-color: white;
+	margin: 0px;
 }
 
 .messageSpan{
