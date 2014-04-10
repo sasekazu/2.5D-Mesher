@@ -16,7 +16,7 @@ $(document).ready(function () {
 	}else if (ua.indexOf('firefox') != -1){
 		// firefoxはOK
 	} else {
-		alert("Google Chrome と Firefox 以外のブラウザは非推奨です．IEは非対応ですm(_ _)m．");
+		alert("お使いのブラウザは非推奨です．推奨ブラウザは Google Chrome と Firefox です．Internet Explorer は HTML5 File API の互換性対応ができていないため，作成したデータを保存できません．");
 	}
 
 	

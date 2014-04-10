@@ -2,6 +2,12 @@
 //////  メッシュ生成完了字のwebGLの処理
 //////////////////////////////////////////////////////
 function renderWebGL(width, height, modelLength, modelTop, modelBottom, vert, face) {
+	// ブラウザのWebGL対応を調べる
+	if(!Detector.webgl) {
+		Detector.addGetWebGLMessage();
+		alert("この実行環境は3D表示に対応していません．");
+		return;
+	}
 	// レンダラの初期化
 	var renderer=new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize(width, height);
@@ -22,12 +28,14 @@ function renderWebGL(width, height, modelLength, modelTop, modelBottom, vert, fa
 	var scene=new THREE.Scene();
 
 	// カメラの作成
-	//var camera = new THREE.PerspectiveCamera(15, window.innerWidth / window.innerHeight, 1, 100000);
+	var camera = new THREE.PerspectiveCamera(15, width / height, 1, 100000);
+	/*
 	var left = - modelLength;
 	var right = -left;
-	var top = -left * window.innerWidth / window.innerHeight;
-	var bottom = left * window.innerWidth / window.innerHeight;
+	var top = -left * width / height;
+	var bottom = left * width / height;
 	var camera = new THREE.OrthographicCamera(left, right, top, bottom, 1, 100000);
+	*/
 
 	camera.position=new THREE.Vector3(0, 0, 500);
 	camera.up = new THREE.Vector3(0,0,1);
@@ -42,7 +50,11 @@ function renderWebGL(width, height, modelLength, modelTop, modelBottom, vert, fa
 	// todo カットオフ角度をモデル依存にする
 	var light = new THREE.SpotLight(0xffffff, 1.0, 0, Math.PI / 2, 10);
 	//var light=new THREE.DirectionalLight(0xffffff, 1.0);
-	light.position.set(0.1*modelLength, 0.1*modelLength, 50*modelTop);
+	var lightz = 20 * modelTop;
+	if(modelTop < 6.0) {
+		lightz = 20 * 6;
+	}
+	light.position.set(modelLength, modelLength, lightz);
 	light.castShadow = true;
 	light.shadowCameraVisible = false;
 	light.shadowMapWidth = 2048;
@@ -84,7 +96,7 @@ function renderWebGL(width, height, modelLength, modelTop, modelBottom, vert, fa
 	new THREE.MeshLambertMaterial({ color: 0xcccccc })
 	);
 	plane.receiveShadow = true;
-	plane.position.set(0, 0, modelBottom);
+	plane.position.set(0, 0, modelBottom-0.5);
 
 	// メッシュをsceneへ追加
 	scene.add(brainMesh);
@@ -95,7 +107,12 @@ function renderWebGL(width, height, modelLength, modelTop, modelBottom, vert, fa
 	function render() {
 		requestAnimationFrame(render); 
 		//cameraCtrl.update();
-		camera.position.set(500 * Math.cos(0.005 * step), 500 * Math.sin(0.005 * step), 500);
+		var camz = 10*modelTop;
+		if(modelTop < 6.0){
+			camz = 10 * 6;
+		}
+		camera.position = new THREE.Vector3(3*modelLength * Math.cos(0.005 * step), 3*modelLength * Math.sin(0.005 * step), camz);
+		//camera.position.set(500 * Math.cos(0.005 * step), 500 * Math.sin(0.005 * step), 2 * modelTop);
 		camera.lookAt(new THREE.Vector3(0, 0, 0));
 		renderer.render(scene, camera);
 		++step;
