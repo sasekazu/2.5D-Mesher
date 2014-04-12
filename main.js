@@ -134,11 +134,17 @@ $(document).ready(function () {
 	/////////////////////////////////////////////////////////
 	/////////　メインの処理
 	/////////////////////////////////////////////////////////
-		
+
+	var prevState = 'none';		
 	function mainloop() {
 
 		var time0 = new Date();
 		var message;
+		// ボタンハイライト
+		if(prevState!==state){
+			buttonHighlight(state);
+		}
+		// メイン処理
 		switch(state) {
 			case "drawOutLine":
 				message = "輪郭追加モード";
@@ -160,6 +166,7 @@ $(document).ready(function () {
 				message = "3D表示"
 				break;
 		}
+		// メッセージと窓サイズ情報の反映
 		$("#modeMessage").text(message);
 		var winWidth = canvasWidth*mmperpixel;
 		var winHeight = canvasHeight*mmperpixel;
@@ -171,10 +178,48 @@ $(document).ready(function () {
 		var time1 = new Date();
 		//console.log(time1-time0 + " [ms]");
 
+		prevState = state;
 
 		setTimeout(mainloop, 30);
 	}
-	
+
+
+	/////////////////////////////////////////////////////////
+	////////　 ボタンハイライト関数
+	/////////////////////////////////////////////////////////
+	function buttonHighlight(state){
+			oncolor = 'seagreen';
+			offcolor = '#404040';
+		switch(state){
+			case "drawOutLine":
+				$('#drawOutLineButton').css('background-color', oncolor);
+				$('#editOutLineButton').css('background-color', offcolor);
+				$('#meshButton').css('background-color', offcolor);
+				$('#3dButton').css('background-color', offcolor);
+				break;
+			case "editOutLine":
+				$('#drawOutLineButton').css('background-color', offcolor);
+				$('#editOutLineButton').css('background-color', oncolor);
+				$('#meshButton').css('background-color', offcolor);
+				$('#3dButton').css('background-color', offcolor);
+				break;
+			case "generateMesh":
+				$('#drawOutLineButton').css('background-color', offcolor);
+				$('#editOutLineButton').css('background-color', offcolor);
+				$('#meshButton').css('background-color', oncolor);
+				$('#3dButton').css('background-color', offcolor);
+				break;
+			case "meshComplete":
+				break;
+			case "3dView":
+				$('#drawOutLineButton').css('background-color', offcolor);
+				$('#editOutLineButton').css('background-color', offcolor);
+				$('#meshButton').css('background-color', offcolor);
+				$('#3dButton').css('background-color', oncolor);
+				break;
+		}
+	}
+
 	
 	/////////////////////////////////////////////////////////
 	////////　 アウトライン作成関数
