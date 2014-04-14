@@ -450,7 +450,7 @@ $(document).ready(function () {
 	// 輪郭編集ボタン
 	$("#editOutLineButton").click(function () {
 		if(outline.closedCurves.length === 0) {
-			alert("修正する輪郭がありません");
+			alert("修正する輪郭がありません．輪郭追加ボタンを押して輪郭を作成してください．");
 			return;
 		}
 		state = "editOutLine";
@@ -459,14 +459,9 @@ $(document).ready(function () {
 
 	// メッシュボタン
 	$("#meshButton").click(function () {
-		if(outline.closedCurves.length==0) {
-			cv=new ClosedCurve(minlen);
-			cv.addPoint([dx, dy]);
-			cv.addPoint([dx, dy+dh]);
-			cv.addPoint([dx+dw, dy+dh]);
-			cv.addPoint([dx+dw, dy]);
-			cv.addPoint([dx, dy]);
-			outline.addClosedLine(cv);
+		if(outline.closedCurves.length === 0) {
+			alert("輪郭がないためメッシュ生成できません．輪郭追加ボタンを押して輪郭を作成してください．");
+			return;
 		}
 
 		mesh=new DelaunayGen(outline, minlen);
