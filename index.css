@@ -61,12 +61,20 @@ a{
 	margin-left: 10px;
 }
 
+#concept{
+	margin-left: 10px;
+}
+
 
 /* centerBoxの中身 */
+#viewerBox{
+	padding: 0px;
+	margin: 0px;
+}
+
 #mViewCanvas {
 	border: ridge #404040;
 	background-color: white;
-	margin: 0px;
 	/* 
 		canvasの幅はhtmlファイルで指定する 
 		CSSに記述すると拡大描画されてしまう
@@ -81,15 +89,22 @@ a{
 	margin: 0px;
 }
 
-.messageSpan{
-	margin-right:  10px;
-	border: solid #404040 1px;
-	width: 400px;
-	padding: 2px 10px;
+#sizeMessage{
+	margin: 0px;
 }
 
-#messageBox{
+#modeMessage{
 	margin: 0px;
+}
+
+.messageBox{
+	margin: 0px;
+}
+
+.messageDiv{
+	padding: 2px 10px;
+	border: dotted #404040 1px;
+	width: 783px;
 }
 
 

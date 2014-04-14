@@ -107,9 +107,9 @@ function renderWebGL(width, height, modelLength, modelTop, modelBottom, vert, fa
 	function render() {
 		requestAnimationFrame(render); 
 		//cameraCtrl.update();
-		var camz = 10*modelTop;
+		var camz = modelTop + 200;
 		if(modelTop < 6.0){
-			camz = 10 * 6;
+			camz = 230;
 		}
 		camera.position = new THREE.Vector3(3*modelLength * Math.cos(0.005 * step), 3*modelLength * Math.sin(0.005 * step), camz);
 		//camera.position.set(500 * Math.cos(0.005 * step), 500 * Math.sin(0.005 * step), 2 * modelTop);

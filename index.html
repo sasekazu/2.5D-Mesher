@@ -30,16 +30,17 @@
 	<div id="page">
 		<header>
 			<div id="topBox">
-				<p id="appP"><span id="appTitle">2.5d Mesher</span><!--<span id="version">ver. 2.5</span>--></p>			
+				<p id="appP"><span id="appTitle">2.5d Mesher</span><!--<span id="version">ver. 2.5</span>-->
+					<span id="concept">輪郭線から3Dデータ（STL形式）を作成</span>
+				</p>			
 			</div><!-- 終了 #topBox --->
 		</header>
 		<div id="pageBody">
 		<div id="centerBox">
-			<div id="viewerBox">
-				<canvas id="mViewCanvas" width="800" height="600"></canvas>
-			</div>
+			<div id="viewerBox"><canvas id="mViewCanvas" width="800" height="600"></canvas></div>
 			<div id="webglBox"></div>
-			<p id="messageBox"><span class="messageSpan" id="modeMessage"></span><span class="messageSpan" id="sizeMessage"></span></p>
+			<div class="messageDiv"><p class="messageBox"><span id="sizeMessage"></span></p></div>
+			<div class="messageDiv"><p class="messageBox"><span id="modeMessage"></span></p></div>
 		</div><!-- 終了 #centerBox -->
 
 		<div id="rightBox">

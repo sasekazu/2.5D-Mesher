@@ -147,23 +147,23 @@ $(document).ready(function () {
 		// メイン処理
 		switch(state) {
 			case "drawOutLine":
-				message = "輪郭追加モード";
+				message = "マウスドラッグして輪郭線を描いてください．輪郭線の始点と終点が一致するまでドラッグして輪郭を閉じてください．";
 				drawOutLineFunc();
 				break;
 			case "editOutLine":
-				message = "輪郭修正モード";
+				message = "輪郭上の点をマウスドラッグで移動して輪郭を整えてください．";
 				editOutLineFunc();
 				break;
 			case "generateMesh":
-				message = "メッシュ生成中";
+				message = "メッシュ生成中です．Delaunay triangulationによるメッシュ生成の様子をお楽しみください．";
 				generateMeshFunc();
 				break;
 			case "meshComplete":
-				message = "メッシュ生成終了";
+				message = "メッシュ生成が完了しました．";
 				meshCompleteFunc();
 				break;
 			case "3dView":
-				message = "3D表示"
+				message = "3D表示しています．厚さは詳細設定から変えることができます．"
 				break;
 		}
 		// メッセージと窓サイズ情報の反映
