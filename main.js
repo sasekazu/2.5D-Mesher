@@ -45,8 +45,10 @@ $(document).ready(function () {
 	
 	
 	// マウスポインタに関する変数
-	var clickState = "Up";		// Up, Down
-	var mousePos = [];
+	var clickState = "Up";	// 左ボタンの状態 Up, Down
+	var mousePos = [];		// 左ボタンの位置
+	var clickStateR = "Up";	// 右ボタンの状態 Up, Down
+	var clickPosR = [];		// 右ボタンの位置
 
 	// 初期状態はアウトライン作成
 	var state = "drawOutLine";
@@ -328,6 +330,10 @@ $(document).ready(function () {
 			}
 		}		
 		context.lineWidth = 1.0;
+
+		// 右クリック定規の描画
+		drawRightButtonRuler();
+
 	}
 	
 	//////////////////////////////////////////////////////////
@@ -383,6 +389,11 @@ $(document).ready(function () {
 				drawLine(context, cvtmp.lines[i].start, cvtmp.lines[i].end);
 			}
 		}		
+
+		
+		// 右クリック定規の描画
+		drawRightButtonRuler();
+
 	}
 
 	//////////////////////////////////////////////////////////
@@ -424,8 +435,32 @@ $(document).ready(function () {
 		if(imgFlag) {
 			context.globalAlpha = 1.0;
 		}
+
+		
+		// 右クリック定規の描画
+		drawRightButtonRuler();
+
 	}
 
+
+	//////////////////////////////////////////////////////////
+	//////  マウス右クリックで出てくる定規の描画
+	//////////////////////////////////////////////////////
+	function drawRightButtonRuler() {
+		if(clickStateR == "Down") {
+			context.strokeStyle = 'darkolivegreen';
+			context.fillStyle = 'darkolivegreen';
+			context.lineWidth = 2.0;
+			drawLine(context, clickPosR[0], mousePos[0])
+			context.lineWidth = 1.0;
+			var rel = numeric.sub(mousePos[0], clickPosR[0]);
+			var len = numeric.norm2(rel);
+			len *= mmperpixel;
+			len = Math.floor(len);
+			context.font = "40px 'Arial'";
+			context.fillText(len + 'mm', mousePos[0][0], mousePos[0][1]);
+		}
+	}
 
 
 	//////////////////////////////////////////////////////////
@@ -484,8 +519,8 @@ $(document).ready(function () {
 	$("#saveButton").click(function(){
 		// ダウンロードリンクの構成
 		$('#downloadDiv').hide();
-	    var v = $("#thicknessBox").val();
-	    var thickness = Number(v);
+		var v = $("#thicknessBox").val();
+		var thickness = Number(v);
 		var text = mesh25d.makeStl(mmperpixel, thickness);
 		var blob = new Blob([text],{"type" : "text/html"});
 		var a = document.getElementById('downloadLink');
@@ -551,6 +586,27 @@ $(document).ready(function () {
 			outline.selectHoldNodes(mousePos);
 		}
 	}
+
+	// 右クリックイベント
+	function rightClickFunc(touches) {
+		
+		clickPosR = [];
+
+		var canvasOffset = canvas.offset();
+		for(var i=0; i<touches.length; ++i){
+			var canvasX = Math.floor(touches[i].pageX-canvasOffset.left);
+			var canvasY = Math.floor(touches[i].pageY-canvasOffset.top);
+			if(canvasX < 0 || canvasX > canvasWidth){
+				return;
+			}
+			if(canvasY < 0 || canvasY > canvasHeight){
+				return;
+			}
+			clickPosR.push([canvasX, canvasY]);
+		}
+		clickStateR = "Down";
+	}
+	
 	
 	// クリックまたはタッチのムーブに対する処理
 	// 引数はタッチしたキャンパス上の点座標が格納されている配列
@@ -563,11 +619,13 @@ $(document).ready(function () {
 			mousePos.push([canvasX, canvasY]);
 		}
 	}
-	
+
+	// 左 or 右クリックのUp時イベント	
 	function endFunc() {
 		clickState = "Up";
+		clickStateR = "Up";
 	}	
-	
+
 	// タブレットのタッチイベント
 	cvs.addEventListener('touchstart', function(event) {
 		event.preventDefault();
@@ -593,7 +651,14 @@ $(document).ready(function () {
 	$(window).mousedown( function(e){
 		touches = [];
 		touches[0] = e;
-		clickFunc(touches);
+		switch(e.button) {
+		case 0:
+			clickFunc(touches);
+			break;
+		case 2:
+			rightClickFunc(touches);
+			break;
+		}
 	});
 	
 	
@@ -611,6 +676,10 @@ $(document).ready(function () {
 		endFunc();
 	});
 	
-	
+	// キャンバス要素内での右クリック無効化
+	$("#mViewCanvas").on('contextmenu',function(e){
+		return false;
+	});
+
 } );
 
