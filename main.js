@@ -149,15 +149,15 @@ $(document).ready(function () {
 		// メイン処理
 		switch(state) {
 			case "drawOutLine":
-				message = "マウスドラッグして輪郭線を描いてください．輪郭線の始点と終点が一致するまでドラッグして輪郭を閉じてください．";
+				message = "マウスで線を描いてください．線の始点と終点を合わせると輪郭として追加されます．グリッドはひとマス10mmです．";
 				drawOutLineFunc();
 				break;
 			case "editOutLine":
-				message = "輪郭上の点をマウスドラッグで移動して輪郭を整えてください．";
+				message = "マウスで点を動かして輪郭を整えてください．マウス右ボタンで長さが測れます．モデルを拡大縮小するには詳細設定の「出力スケール」を調整してください．";
 				editOutLineFunc();
 				break;
 			case "generateMesh":
-				message = "メッシュ生成中です．Delaunay triangulationによるメッシュ生成の様子をお楽しみください．";
+				message = "メッシュ生成中です．（入り組んだ境界はうまく分割できないことがあります…．）";
 				generateMeshFunc();
 				break;
 			case "meshComplete":
@@ -165,17 +165,11 @@ $(document).ready(function () {
 				meshCompleteFunc();
 				break;
 			case "3dView":
-				message = "3D表示しています．厚さは詳細設定から変えることができます．"
+				message = "厚さは詳細設定から変えることができます．"
 				break;
 		}
 		// メッセージと窓サイズ情報の反映
 		$("#modeMessage").text(message);
-		var winWidth = canvasWidth*mmperpixel;
-		var winHeight = canvasHeight*mmperpixel;
-		winWidth = winWidth.toFixed(0);
-		winHeight = winHeight.toFixed(0);
-		$("#sizeMessage").text("窓サイズ 幅"+ winWidth + "mm × 高さ" + winHeight + "mm");
-
 
 		var time1 = new Date();
 		//console.log(time1-time0 + " [ms]");
