@@ -149,11 +149,11 @@ $(document).ready(function () {
 		// メイン処理
 		switch(state) {
 			case "drawOutLine":
-				message = "マウスで線を描いてください．線の始点と終点を合わせると輪郭として追加されます．グリッドはひとマス10mmです．";
+				message = "マウスで線を描いてください．線の始点と終点を合わせると輪郭として追加されます．グリッドはひとマス10mmです．描けたら「2．輪郭修正」をクリック．";
 				drawOutLineFunc();
 				break;
 			case "editOutLine":
-				message = "マウスで点を動かして輪郭を整えてください．マウス右ボタンで長さが測れます．モデルを拡大縮小するには詳細設定の「出力スケール」を調整してください．";
+				message = "マウスで点を動かして輪郭を整えてください．マウス右ボタンで長さが測れます．モデルを拡大縮小するには詳細設定の「出力スケール」を調整してください．修正できたら「3．メッシュ生成」をクリック．";
 				editOutLineFunc();
 				break;
 			case "generateMesh":
@@ -161,11 +161,11 @@ $(document).ready(function () {
 				generateMeshFunc();
 				break;
 			case "meshComplete":
-				message = "メッシュ生成が完了しました．";
+				message = "メッシュ生成が完了しました、「4．3D表示」で確認してください．（入り組んだ境界はうまく分割できないことがあります…．）";
 				meshCompleteFunc();
 				break;
 			case "3dView":
-				message = "厚さは詳細設定から変えることができます．"
+				message = "厚さは詳細設定から変えることができます．これでよければ「5．保存」をクリックし，生成されたリンクから右クリックして保存してください．"
 				break;
 		}
 		// メッセージと窓サイズ情報の反映

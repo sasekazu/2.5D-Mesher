@@ -3,6 +3,10 @@
 *{
 }
 
+a{
+	text-decoration: none;
+}
+
 body{
 	font-family: "ヒラギノ角ゴ ProN", "Hiragino Kaku Gothic ProN", "メイリオ", Meiryo, sans-serif;
 }
